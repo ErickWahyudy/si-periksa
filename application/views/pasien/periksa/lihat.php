@@ -30,13 +30,13 @@
                                     <td><?= $periksa['catatan'] ?></td>
                                     <td>
                                         <?php if ($periksa['status'] == 'BL') { ?>
-                                                <span class="alert btn-warning">Dalam Antrian</span>
+                                                <span class="btn btn-warning">Dalam Antrian</span>
                                             <?php } else if ($periksa['status'] == 'D') { ?>
-                                                <span class="alert btn-info">Diperiksa</span>
+                                                <span class="btn btn-info">Diperiksa</span>
                                             <?php } else if ($periksa['status'] == 'S') { ?>
-                                                <span class="alert btn-success">Sudah Diperiksa</span>
+                                                <span class="btn btn-success">Sudah Diperiksa</span>
                                             <?php } else if ($periksa['status'] == 'BTL') { ?>
-                                                <span class="alert btn-danger">Batal Diperiksa</span>
+                                                <span class="btn btn-danger">Batal Diperiksa</span>
                                         <?php } ?>
                                     </td>
                                     <td>

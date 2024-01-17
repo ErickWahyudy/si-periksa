@@ -73,7 +73,7 @@ if($aksi == "lihat"):
                                     <tr>
                                         <td></td>
                                         <td>
-                                            <a href="../superadmin/home" class="btn btn-primary">Kembali</a>
+                                            <a href="../admin/home" class="btn btn-primary">Kembali</a>
                                             &nbsp;&nbsp;
                                             <a href="" class="btn btn-warning" data-toggle="modal"
                                                 data-target="#editAkun"><i class="fa fa-edit"></i> Perbarui
@@ -329,7 +329,7 @@ $(document).on('submit', '#edit', function(e) {
 
     $.ajax({
         type: "POST",
-        url: "<?php echo site_url('superadmin/profile/api_edit/') ?>" +
+        url: "<?php echo site_url('admin/profile/api_edit/') ?>" +
             form_data.get('id_pengguna'),
         dataType: "json",
         data: form_data,
@@ -376,7 +376,7 @@ $(document).on('submit', '#gantipassword', function(e) {
 
     $.ajax({
         type: "POST",
-        url: "<?php echo site_url('superadmin/profile/api_password/') ?>" +
+        url: "<?php echo site_url('admin/profile/api_password/') ?>" +
             form_data.get('id_pengguna'),
         dataType: "json",
         data: form_data,
@@ -417,7 +417,7 @@ $(document).on('submit', '#editfoto', function(e) {
 
     $.ajax({
         type: "POST",
-        url: "<?php echo site_url('superadmin/profile/api_upload/') ?>" +
+        url: "<?php echo site_url('admin/profile/api_upload/') ?>" +
             form_data.get(
                 'id_pengguna'),
         dataType: "json",
@@ -471,7 +471,7 @@ function hapusfoto(id_pengguna) {
         ) { // Only delete the data if the user clicked on the confirm button
             $.ajax({
                 type: "POST",
-                url: "<?php echo site_url('superadmin/profile/api_hapus/') ?>" +
+                url: "<?php echo site_url('admin/profile/api_hapus/') ?>" +
                     id_pengguna,
                 dataType: "json",
             }).done(function() {

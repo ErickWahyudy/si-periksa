@@ -61,8 +61,8 @@
               <div class="clearfix"></div>
 
               <div class="separator">
-                <p class="change_link">New to site?
-                  <a href="#signup" class="to_register"> Create Account </a>
+                <p class="change_link">Belum punya akun?
+                  <a href="#signup" class="to_register"><u> Daftar sekarang </u></a>
                 </p>
 
                 <div class="clearfix"></div>
@@ -87,7 +87,7 @@
               </div>
 
               <div>
-                <input type="date" class="form-control" name="tgl_lahir" placeholder="Tanggal Lahir" required="" autocomplete="off" />
+                <input type="date" class="form-control" name="tgl_lahir" placeholder="Tanggal Lahir" required="" autocomplete="off" value="<?= date('Y-m-d') ?>" />
               </div>
                   <br>
               <div>
@@ -99,8 +99,9 @@
               </div>
                   <br>
               <div>
-                <input type="text" class="form-control" name="no_hp" placeholder="No HP" required="" autocomplete="off" />
+                <input type="number" class="form-control" name="no_hp" placeholder="No HP" required="" autocomplete="off" />
               </div>
+                  <br>
                   
               <div>
                 <select id="provinsi" onchange="populateKabupaten()" class="form-control select2" required="">
@@ -139,8 +140,8 @@
               <div class="clearfix"></div>
 
               <div class="separator">
-                <p class="change_link">Already a member ?
-                  <a href="#signin" class="to_register"> Log in </a>
+                <p class="change_link">Sudah punya akun ?
+                  <a href="#signin" class="to_register"><u> Log in </u></a>
                 </p>
 
                 <div class="clearfix"></div>

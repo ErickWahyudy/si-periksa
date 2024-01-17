@@ -37,7 +37,7 @@ class Home extends CI_controller
 
 		$kode_tgl = date('Y-m-d');
 
-		$view = array('judul'      			=> 'Data Antrian Periksa',
+		$view = array('judul'      			=> 'Home',
 						'aksi'      		=> 'lihat',
 						'data'      		=> $this->m_periksa->view($tgl=$kode_tgl)->result_array(),
 						'tgl_periksa'		=> $tgl_periksa,
