@@ -15,20 +15,14 @@
                                     <tr>
                                         <td width="20%">Nama Pasien</td>
                                         <td width="80%">
-                                            <select name="id_pasien" id="id_pasien" class="form-control select2" style="width: 100%;" required>
-                                                <option value="">--Pilih Nama Pasien--</option>
-                                                <?php foreach($data as $psn): ?>
-                                                    <option value="<?= $psn['id_pasien'] ?>" data-tgl_lahir="<?= $psn['tgl_lahir'] ?>">
-                                                        <?= ucfirst($psn['nama']) ?>
-                                                    </option>
-                                                <?php endforeach; ?>
-                                            </select>
+                                            <input type="hidden" name="id_pasien" id="id_pasien" class="form-control" placeholder="id_pasien" autocomplete="off" required="" value="<?= $id_pasien ?>" readonly>
+                                            <input type="text" id="nama" class="form-control" placeholder="nama" autocomplete="off" required="" value="<?= $nama ?>" readonly>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td width="20%">Umur (Tahun)</td>
                                         <td width="80%">
-                                            <input type="text" name="umur" id="umur" class="form-control" placeholder="umur" autocomplete="off" readonly>
+                                            <input type="text" name="umur" id="umur" class="form-control" placeholder="umur" autocomplete="off" value="<?= $umur ?>" required="" readonly>
                                         </td>
                                     </tr>
                                     <tr>
@@ -46,7 +40,7 @@
                                     <tr>
 
                                         <td colspan="2"><br>
-                                            <a href="<?= base_url('superadmin/home') ?>" class="btn btn-danger btn-sm">Kembali</a>
+                                            <a href="<?= base_url('pasien/home') ?>" class="btn btn-danger btn-sm">Kembali</a>
                                             <button type="submit" class="btn btn-primary btn-sm" name="submit" value="submit">Simpan</button>
                                         </td>
                                     </tr>                                  
@@ -61,45 +55,12 @@
 </div>
 
 <script>
-    // Fungsi untuk menghitung umur berdasarkan tanggal lahir
-    function calculateAge(birthdate) {
-        var birthdate = new Date(birthdate);
-        var today = new Date();
-        var age = today.getFullYear() - birthdate.getFullYear();
-        var m = today.getMonth() - birthdate.getMonth();
-
-        age = age;
-        return age;
-
-    }
-
-    
-    $(document).ready(function() {
-        // Inisialisasi Select2 pada elemen dengan id 'id_pasien'
-        $('#id_pasien').select2({
-            placeholder: "--Pilih Nama Pasien--",
-            allowClear: true
-        });
-
-        // Event change pada dropdown nama pasien
-        $('#id_pasien').change(function () {
-            var selectedPasien = $(this).find(':selected');
-            var birthdate = selectedPasien.data('tgl_lahir');
-
-            // Jika tanggal lahir ada, hitung umur dan tampilkan
-            if (birthdate) {
-                var age = calculateAge(birthdate);
-                $('#umur').val(age);
-            }
-        });
-    });
-
     //add data
     $(document).ready(function() {
         $('#add').submit(function(e) {
             e.preventDefault();
             $.ajax({
-                url: "<?= site_url('superadmin/periksa/api_add') ?>",
+                url: "<?= site_url('pasien/periksa/api_add') ?>",
                 type: "POST",
                 data: new FormData(this),
                 processData: false,
@@ -117,7 +78,7 @@
                             showConfirmButton: true,
                             confirmButtonText: "OKEE",
                         }).then(function() {
-                            location.reload();
+                            window.location.href = "<?= site_url('pasien/home') ?>";
                         });
                     } else {
                         // Hapus tag HTML dari pesan error

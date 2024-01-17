@@ -106,10 +106,10 @@ class Pasien extends CI_controller
       array(
           'field' => 'no_hp',
           'label' => 'No HP',
-          'rules' => 'required',
+          'rules' => 'required|is_unique[tb_pasien.no_hp]',
           'errors' => array(
               'required' => 'No HP tidak boleh kosong',
-              'is_unique' => 'No HP sudah terdaftar',
+              'is_unique' => 'No HP sudah terdaftar, silahkan gunakan No HP lain',
             ),
           ),
       array(
@@ -136,6 +136,24 @@ class Pasien extends CI_controller
               'required' => 'Kabupaten tidak boleh kosong',
             ),
           ),
+      array(
+          'field' => 'email',
+          'label' => 'Email',
+          'rules' => 'required|valid_email|is_unique[tb_pasien.email]',
+          'errors' => array(
+              'required' => 'Email tidak boleh kosong',
+              'valid_email' => 'Email tidak valid',
+              'is_unique' => 'Email sudah terdaftar',
+            ),
+          ),
+      array(
+          'field' => 'password',
+          'label' => 'Password',
+          'rules' => 'required',
+          'errors' => array(
+              'required' => 'Password tidak boleh kosong',
+            ),
+          ),
     );
     $this->form_validation->set_rules($rules);
     if ($this->form_validation->run() == FALSE) {
@@ -153,6 +171,8 @@ class Pasien extends CI_controller
         'alamat'         =>$this->input->post('alamat'),
         'kec'            =>$this->input->post('kec'),
         'kab'            =>$this->input->post('kab'),
+        'email'          =>$this->input->post('email'),
+        'password'       =>md5($this->input->post('password')),
       ];
       if ($this->m_pasien->add($SQLinsert)) {
         $response = [
@@ -233,6 +253,15 @@ class Pasien extends CI_controller
                   'required' => 'Kabupaten tidak boleh kosong',
                 ),
               ),
+          array(
+              'field' => 'email',
+              'label' => 'Email',
+              'rules' => 'required|valid_email',
+              'errors' => array(
+                  'required' => 'Email tidak boleh kosong',
+                  'valid_email' => 'Email tidak valid',
+                ),
+              ),
         );
         $this->form_validation->set_rules($rules);
         if ($this->form_validation->run() == FALSE) {
@@ -249,6 +278,7 @@ class Pasien extends CI_controller
             'alamat'         =>$this->input->post('alamat'),
             'kec'            =>$this->input->post('kec'),
             'kab'            =>$this->input->post('kab'),
+            'email'          =>$this->input->post('email'),
           ];
           if ($this->m_pasien->update($id, $SQLupdate)) {
             $response = [
@@ -264,6 +294,43 @@ class Pasien extends CI_controller
       }
 
       $this->output
+          ->set_content_type('application/json')
+          ->set_output(json_encode($response));
+      }
+
+      //API edit password
+      public function api_password($id='', $SQLupdate='')
+      {
+        $rules = array(
+          array(
+            'field' => 'password',
+            'label' => 'password',
+            'rules' => 'required'
+          )
+        );
+        $this->form_validation->set_rules($rules);
+        if ($this->form_validation->run() == FALSE) {
+          $response = [
+            'status' => false,
+            'message' => 'Tidak ada data'
+          ];
+        } else {
+          $SQLupdate = [
+            'password'        => md5($this->input->post('password'))
+          ];
+          if ($this->m_pasien->update($id, $SQLupdate)) {
+            $response = [
+              'status' => true,
+              'message' => 'Berhasil mengubah data'
+            ];
+          } else {
+            $response = [
+              'status' => false,
+              'message' => 'Gagal mengubah data'
+            ];
+          }
+        }
+        $this->output
           ->set_content_type('application/json')
           ->set_output(json_encode($response));
       }

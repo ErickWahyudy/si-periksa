@@ -26,6 +26,8 @@
     <link href="<?= base_url('themes/gentelella') ?>/build/css/custom.min.css" rel="stylesheet">
     <!-- jQuery -->
     <script src="<?= base_url('themes/gentelella') ?>/vendors/jquery/dist/jquery.min.js"></script>
+    <!-- select2 -->
+    <link rel="stylesheet" href="<?= base_url('themes/gentelella') ?>/vendors/select2/dist/css/select2.min.css">
 
     <!-- Favicon -->
     <link href="<?= base_url('themes') ?>/favicon.ico" rel="icon">
@@ -79,15 +81,47 @@
         <div id="register" class="animate form registration_form">
           <section class="login_content">
             <form id="add" method="post">
-              <h1>Create Account User</h1>
+              <h1>Create New Account Pasien</h1>
               <div>
                 <input type="text" class="form-control" name="nama" placeholder="Nama Lengkap" required="" autocomplete="off" />
               </div>
+
+              <div>
+                <input type="date" class="form-control" name="tgl_lahir" placeholder="Tanggal Lahir" required="" autocomplete="off" />
+              </div>
+                  <br>
+              <div>
+                <select name="jenis_kelamin" class="form-control" required="">
+                  <option value="">-- Pilih Jenis Kelamin --</option>
+                  <option value="Laki-laki">Laki-laki</option>
+                  <option value="Perempuan">Perempuan</option>
+                </select>
+              </div>
+                  <br>
               <div>
                 <input type="text" class="form-control" name="no_hp" placeholder="No HP" required="" autocomplete="off" />
               </div>
+                  
               <div>
-                <input type="text" class="form-control" name="keterangan" placeholder="Alamat" required="" autocomplete="off" />
+                <select id="provinsi" onchange="populateKabupaten()" class="form-control select2" required="">
+                  <!-- Pilihan Provinsi akan diisi secara dinamis dari API -->
+                </select>
+              </div>
+                  <br>
+              <div>
+                  <select id="kabupaten" name="kab" onchange="populateKecamatan()" class="form-control select2" required="" disabled>
+                    <option value=''>Pilih Kabupaten/Kota</option>
+                  </select>
+              </div>
+                  <br>
+              <div>
+                  <select id="kecamatan" name="kec" onchange="populateKelurahan()" class="form-control select2" required="" disabled>
+                    <option value=''>Pilih Kecamatan</option>
+                  </select>
+              </div>
+                  <br>
+              <div>
+                  <input type="text" class="form-control" name="alamat" id="kelurahan" placeholder="Alamat" required="" autocomplete="off" disabled>
               </div>
               <div>
                 <input type="email" class="form-control" name="email" placeholder="Email" required="" autocomplete="off" />
@@ -95,6 +129,9 @@
               <div>
                 <input type="password" class="form-control" name="password" placeholder="Password" required="" autocomplete="off" />
               </div>
+              <br><br>
+                
+              
               <div>
                 <button type="submit" class="btn btn-primary submit">Submit</button>
               </div>
@@ -120,8 +157,7 @@
         </div>
       </div>
     </div>
-  </body>
-</html>
+
 <script type="text/javascript">
   //register data
   $(document).ready(function() {
@@ -174,4 +210,106 @@
       });
   });
   
+ //API WIlayah
+ fetch('https://kanglerian.github.io/api-wilayah-indonesia/api/provinces.json')
+      .then(response => response.json())
+      .then(provinces => {
+        var data = provinces;
+        var tampung = '<option value="">Pilih Provinsi</option>';
+        data.forEach(element => {
+          tampung += `<option data-region="${element.id}" value="${element.name}">${element.name}</option>`;
+        });
+        document.getElementById('provinsi').innerHTML = tampung;
+      })
+
+    function populateKabupaten() {
+      var provinsi = document.getElementById('provinsi').value;
+
+      // Menonaktifkan dropdown kabupaten
+      document.getElementById('kabupaten').disabled = true;
+
+      // Menonaktifkan dropdown kecamatan
+      document.getElementById('kecamatan').disabled = true;
+
+      // Menonaktifkan input alamat
+      document.getElementById('kelurahan').disabled = true;
+
+      if (provinsi) {
+        var region = document.querySelector(`#provinsi option[value="${provinsi}"]`).dataset.region;
+        fetch(`https://kanglerian.github.io/api-wilayah-indonesia/api/regencies/${region}.json`)
+          .then(response => response.json())
+          .then(regencies => {
+            var data = regencies;
+            var tampung = '<option value="">Pilih Kabupaten/Kota</option>';
+            data.forEach(element => {
+              tampung += `<option data-region="${element.id}" value="${element.name}">${element.name}</option>`;
+            });
+            document.getElementById('kabupaten').innerHTML = tampung;
+
+            // Mengaktifkan dropdown kabupaten
+            document.getElementById('kabupaten').disabled = false;
+          })
+      }
+    }
+
+    function populateKecamatan() {
+            var kabupaten = document.getElementById('kabupaten').value;
+
+            // Menonaktifkan dropdown kecamatan
+            document.getElementById('kecamatan').disabled = true;
+
+            // Menonaktifkan input alamat
+            document.getElementById('kelurahan').disabled = true;
+
+            if (kabupaten) {
+              var region = document.querySelector(`#kabupaten option[value="${kabupaten}"]`).dataset.region;
+              fetch(`https://kanglerian.github.io/api-wilayah-indonesia/api/districts/${region}.json`)
+                .then(response => response.json())
+                .then(districts => {
+                  var data = districts;
+                  var tampung = '<option value="">Pilih Kecamatan</option>';
+                  data.forEach(element => {
+                    tampung += `<option data-region="${element.id}" value="${element.name}">${element.name}</option>`;
+                  });
+                  document.getElementById('kecamatan').innerHTML = tampung;
+
+                  // Mengaktifkan dropdown kecamatan
+                  document.getElementById('kecamatan').disabled = false;
+                })
+            }
+          }
+
+          function populateKelurahan() {
+            var kecamatan = document.getElementById('kecamatan').value;
+
+            // Menonaktifkan input alamat
+            document.getElementById('kelurahan').disabled = true;
+
+            if (kecamatan) {
+              var region = document.querySelector(`#kecamatan option[value="${kecamatan}"]`).dataset.region;
+              fetch(`https://kanglerian.github.io/api-wilayah-indonesia/api/villages/${region}.json`)
+                .then(response => response.json())
+                .then(villages => {
+                  var data = villages;
+                  var tampung = '<option value="">Pilih Kelurahan/Desa</option>';
+                  data.forEach(element => {
+                    tampung += `<option value="${element.name}">${element.name}</option>`;
+                  });
+                  document.getElementById('kelurahan').innerHTML = tampung;
+
+                  // Mengaktifkan input alamat
+                  document.getElementById('kelurahan').disabled = false;
+                })
+            }
+          }
+
+    $(function () {
+    //Initialize Select2 Elements
+    $('.select2').select2()
+    })
+  
   </script>
+<!-- Select2 -->
+<script src="<?= base_url('themes/gentelella') ?>/vendors/select2/dist/js/select2.full.min.js"></script>
+</body>
+</html>

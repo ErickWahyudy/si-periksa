@@ -23,7 +23,7 @@ class Home extends CI_controller
    $this->load->library('session');
     $this->load->library('form_validation');
 	 // error_reporting(0);
-	 if($this->session->userdata('superadmin') != TRUE){
+	 if($this->session->userdata('pasien') != TRUE){
     redirect(base_url(''));
      exit;
 	};
@@ -32,16 +32,20 @@ class Home extends CI_controller
 
 	public function index($id='')
 	{
-		// $data=$this->m_periksa->view_id_periksa($id)->row_array(),
+		$data=$this->m_periksa->view_id_pasien($id)->row_array();
+		$tgl_periksa = $data['tgl_periksa'];
+
 		$kode_tgl = date('Y-m-d');
 
-		$view = array('judul'      		=>'Data Antrian Periksa',
-						'aksi'      	=>'lihat',
-						'data'      	=>$this->m_periksa->view($tgl=$kode_tgl)->result_array(),
-						'kode_tgl'		=>$kode_tgl,
+		$view = array('judul'      			=> 'Data Antrian Periksa',
+						'aksi'      		=> 'lihat',
+						'data'      		=> $this->m_periksa->view($tgl=$kode_tgl)->result_array(),
+						'tgl_periksa'		=> $tgl_periksa,
+						'antrian_berikut' 	=> $this->m_periksa->view($tgl=$tgl_periksa)->result_array(),
+						'kode_tgl'			=> $kode_tgl,
 	  );
 
-	 $this->load->view('superadmin/home',$view);
+	 $this->load->view('pasien/home',$view);
 	}
 	
 }

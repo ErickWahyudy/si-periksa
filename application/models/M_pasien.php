@@ -43,4 +43,15 @@ public function delete($id=''){
   return $this->db-> delete($this->table);
 }
 
+//untuk page pasien login
+public function view_id_pasien($id='')
+{
+  $id = $this->session->userdata['id_pasien'];
+  $this->db->select('*');
+  $this->db->from($this->table);
+  $this->db->where('id_pasien', $id);
+  $this->db->order_by('id_pasien');
+  return $this->db->get();
+}
+
 }

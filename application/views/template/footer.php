@@ -135,7 +135,10 @@ function get_client_browser() {
 <script>
   $(function () {
     //Initialize Select2 Elements
-    $('.select2').select2()
+    $('.select2').select2({
+        //modal
+        dropdownParent: $('#modal-default'),
+    })
     })
     
 </script>

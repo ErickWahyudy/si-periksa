@@ -106,26 +106,59 @@
                                     required placeholder="No HP"></td>
                         </tr>
                         <tr>
-                            <td><label for="alamat">Alamat:</label></td>
+                            <td><label for="provinsi">Provinsi:</label></td>
                         </tr>
+                        <div id="modal-default">
                         <tr>
-                            <td><input type="text" name="alamat" id="alamat" class="form-control" autocomplete="off"
-                                    required placeholder="Alamat"></td>
-                        </tr>
-                        <tr>
-                            <td><label for="kec">Kecamatan:</label></td>
-                        </tr>
-                        <tr>
-                            <td><input type="text" name="kec" id="kec" class="form-control" autocomplete="off"
-                                    required placeholder="Kecamatan"></td>
+                            <td>
+                                <select id="provinsi" onchange="populateKabupaten()" class="form-control select2" required="" style="width: 100%;">
+                                <!-- Pilihan Provinsi akan diisi secara dinamis dari API -->
+                                </select>
+                            </td>
                         </tr>
                         <tr>
                             <td><label for="kab">Kabupaten:</label></td>
                         </tr>
                         <tr>
-                            <td><input type="text" name="kab" id="kab" class="form-control" autocomplete="off"
-                                    required placeholder="Kabupaten"></td>
+                            <td>
+                                <select id="kabupaten" name="kab" onchange="populateKecamatan()" class="form-control select2" style="width: 100%;" required="" disabled>
+                                    <option value=''>Pilih Kabupaten/Kota</option>
+                                </select>
+                            </td>
                         </tr>                       
+                        <tr>
+                            <td><label for="kec">Kecamatan:</label></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <select id="kecamatan" name="kec" onchange="populateKelurahan()" class="form-control select2" style="width: 100%;" required="" disabled>
+                                    <option value=''>Pilih Kecamatan</option>
+                                </select>
+                            </td>
+                        </tr>
+                        </div>
+                        <tr>
+                            <td><label for="alamat">Alamat:</label></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="text" class="form-control" name="alamat" id="kelurahan" placeholder="Alamat" required="" autocomplete="off" disabled>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><label for="email">Email:</label></td>
+                        </tr>
+                        <tr>
+                            <td><input type="email" name="email" id="email" class="form-control" autocomplete="off"
+                                    required placeholder="Email"></td>
+                        </tr>
+                        <tr>
+                            <td><label for="password">Password:</label></td>
+                        </tr>
+                        <tr>
+                            <td><input type="password" name="password" id="password" class="form-control"
+                                    autocomplete="off" required placeholder="Password"></td>
+                        </tr>
 
                         <tr>
                             <td><br><input type="submit" name="kirim" value="Simpan" class="btn btn-success"></td>
@@ -210,7 +243,23 @@
                         <tr>
                             <td><input type="text" name="kab" id="kab" class="form-control" autocomplete="off"
                                     value="<?= $pasien['kab'] ?>" required></td>
-                        </tr>                      
+                        </tr>
+                        <tr>
+                            <td><label for="email">Email:</label></td>
+                        </tr>
+                        <tr>
+                            <td><input type="email" name="email" id="email" class="form-control" autocomplete="off"
+                                    value="<?= $pasien['email'] ?>" required></td>
+                        </tr>  
+                        <tr>
+                            <td><label for="password">Password:</label></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="" class="btn btn-info" data-toggle="modal" data-target="#ganti_password<?= $pasien['id_pasien'] ?>"><i
+                                class="fa fa-key"></i> Ganti Password</a>
+                            </td>
+                        </tr>                    
                       
                         <tr>
                             <td>
@@ -227,8 +276,191 @@
 </div>
 <?php endforeach; ?>
 
+<!-- modal ganti password -->
+<?php foreach($data as $pasien): ?>
+<div class="modal fade" id="ganti_password<?= $pasien['id_pasien'] ?>" tabindex="-1" role="dialog"
+    aria-labelledby="ganti_password<?= $pasien['id_pasien'] ?>Label" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ganti_password<?= $pasien['id_pasien'] ?>Label">Edit <?= $judul ?>
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                    <form id="gantipassword" method="post">
+                    <input type="hidden" name="id_pasien" value="<?= $pasien['id_pasien'] ?>">
+                        <tr>
+                            <td>
+                                <label for="ganti_password<?= $pasien['id_pasien'] ?>">Ganti Password:</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="password" id="password<?= $pasien['id_pasien'] ?>" name="password"
+                                class="form-control" required="" autocomplete="off">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for="konfirmasi_password<?= $pasien['id_pasien'] ?>">Konfirmasi Password:</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="password" id="konfirmasi_password<?= $pasien['id_pasien'] ?>"
+                                name="konfirmasi_password" class="form-control" autocomplete="off" required>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="checkbox" onclick="viewPassword('<?= $pasien['id_pasien'] ?>')"> Lihat Password
+                            </td>
+                        </tr>
 
-<script>
+                        <tr>
+                            <td>
+                                <br><br>
+                                <input type="submit" name="kirim" value="Simpan" class="btn btn-success">
+                            </td>
+                        </tr>
+                    </form>
+            </div>
+        </div>
+    </div>
+</div>
+<?php endforeach; ?>
+
+
+<script type="text/javascript">
+//validasi password
+function validasi(id_pasien) {
+    var password = document.getElementById("password" + id_pasien).value;
+    var konfirmasi_password = document.getElementById("konfirmasi_password" + id_pasien).value;
+
+    if (password !== konfirmasi_password) {
+        // Display Swal for password mismatch
+        swal({
+            title: "Password Tidak Sama",
+            text: "Silakan pastikan password yang dimasukkan sama dengan konfirmasi password",
+            type: "error",
+            showConfirmButton: true,
+            confirmButtonText: "OKEE",
+        });
+        return false;
+    }
+    return true;
+}
+
+
+//view password
+function viewPassword(id_pasien) {
+    var password = document.getElementById("password" + id_pasien);
+    var konfirmasi_password = document.getElementById("konfirmasi_password" + id_pasien);
+    if (password.type === "password") {
+        password.type = "text";
+        konfirmasi_password.type = "text";
+    } else {
+        password.type = "password";
+        konfirmasi_password.type = "password";
+    }
+}
+
+//API Wilayah
+fetch('https://kanglerian.github.io/api-wilayah-indonesia/api/provinces.json')
+          .then(response => response.json())
+          .then(provinces => {
+            var data = provinces;
+            var tampung = '<option value="">Pilih Provinsi</option>';
+            data.forEach(element => {
+              tampung += `<option data-region="${element.id}" value="${element.name}">${element.name}</option>`;
+            });
+            document.getElementById('provinsi').innerHTML = tampung;
+          })
+
+        function populateKabupaten() {
+          var provinsi = document.getElementById('provinsi').value;
+
+          // Menonaktifkan dropdown kabupaten
+          document.getElementById('kabupaten').disabled = true;
+
+          // Menonaktifkan dropdown kecamatan
+          document.getElementById('kecamatan').disabled = true;
+
+          // Menonaktifkan input alamat
+          document.getElementById('kelurahan').disabled = true;
+
+          if (provinsi) {
+            var region = document.querySelector(`#provinsi option[value="${provinsi}"]`).dataset.region;
+            fetch(`https://kanglerian.github.io/api-wilayah-indonesia/api/regencies/${region}.json`)
+              .then(response => response.json())
+              .then(regencies => {
+                var data = regencies;
+                var tampung = '<option value="">Pilih Kabupaten/Kota</option>';
+                data.forEach(element => {
+                  tampung += `<option data-region="${element.id}" value="${element.name}">${element.name}</option>`;
+                });
+                document.getElementById('kabupaten').innerHTML = tampung;
+
+                // Mengaktifkan dropdown kabupaten
+                document.getElementById('kabupaten').disabled = false;
+              })
+          }
+        }
+
+        function populateKecamatan() {
+                var kabupaten = document.getElementById('kabupaten').value;
+
+                // Menonaktifkan dropdown kecamatan
+                document.getElementById('kecamatan').disabled = true;
+
+                // Menonaktifkan input alamat
+                document.getElementById('kelurahan').disabled = true;
+
+                if (kabupaten) {
+                  var region = document.querySelector(`#kabupaten option[value="${kabupaten}"]`).dataset.region;
+                  fetch(`https://kanglerian.github.io/api-wilayah-indonesia/api/districts/${region}.json`)
+                    .then(response => response.json())
+                    .then(districts => {
+                      var data = districts;
+                      var tampung = '<option value="">Pilih Kecamatan</option>';
+                      data.forEach(element => {
+                        tampung += `<option data-region="${element.id}" value="${element.name}">${element.name}</option>`;
+                      });
+                      document.getElementById('kecamatan').innerHTML = tampung;
+
+                      // Mengaktifkan dropdown kecamatan
+                      document.getElementById('kecamatan').disabled = false;
+                    })
+                }
+              }
+
+              function populateKelurahan() {
+                var kecamatan = document.getElementById('kecamatan').value;
+
+                // Menonaktifkan input alamat
+                document.getElementById('kelurahan').disabled = true;
+
+                if (kecamatan) {
+                  var region = document.querySelector(`#kecamatan option[value="${kecamatan}"]`).dataset.region;
+                  fetch(`https://kanglerian.github.io/api-wilayah-indonesia/api/villages/${region}.json`)
+                    .then(response => response.json())
+                    .then(villages => {
+                      var data = villages;
+                      var tampung = '<option value="">Pilih Kelurahan/Desa</option>';
+                      data.forEach(element => {
+                        tampung += `<option value="${element.name}">${element.name}</option>`;
+                      });
+                      document.getElementById('kelurahan').innerHTML = tampung;
+
+                      // Mengaktifkan input alamat
+                      document.getElementById('kelurahan').disabled = false;
+                    })
+                }
+              }
+              
 //add data
 $(document).ready(function() {
     $('#add').submit(function(e) {
@@ -311,6 +543,51 @@ $(document).on('submit', '#edit', function(e) {
             swal({
                 title: "Gagal",
                 text: "Data Gagal Diubah",
+                type: "error",
+                showConfirmButton: true,
+                confirmButtonText: "OKEE",
+            }).then(function() {
+                location.reload();
+            });
+        }
+    });
+});
+
+//ganti password
+$(document).on('submit', '#gantipassword', function(e) {
+    e.preventDefault();
+    // Call the validation function
+    if (!validasi($(this).find('input[name="id_pasien"]').val())) {
+        return; // Do not proceed with the submission if validation fails
+    }
+    var form_data = new FormData(this);
+
+    $.ajax({
+        type: "POST",
+        url: "<?php echo site_url('superadmin/pasien/api_password/') ?>" + form_data.get(
+            'id_pasien'),
+        dataType: "json",
+        data: form_data,
+        processData: false,
+        contentType: false,
+        //memanggil swall ketika berhasil
+        success: function(data) {
+            $('#ganti_password' + form_data.get('id_pasien'));
+            swal({
+                title: "Berhasil",
+                text: "Password Berhasil Diubah",
+                type: "success",
+                showConfirmButton: true,
+                confirmButtonText: "OKEE",
+            }).then(function() {
+                location.reload();
+            });
+        },
+        //memanggil swall ketika gagal
+        error: function(data) {
+            swal({
+                title: "Gagal",
+                text: "Password Gagal Diubah",
                 type: "error",
                 showConfirmButton: true,
                 confirmButtonText: "OKEE",

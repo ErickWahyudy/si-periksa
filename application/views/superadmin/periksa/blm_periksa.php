@@ -1,3 +1,26 @@
+<?php $this->load->view('template/header'); ?>
+<?= $this->session->flashdata('pesan') ?>
+
+<?php if($depan == TRUE): ?>
+<table class="table table-striped table">
+        <form action="" method="POST">
+            <tr>
+                <th class="col-sm-3">Pilih Tanggal</th>
+                <td>
+                    <input type="date" name="tgl" class="form-control" value="<?= date("Y-m-d") ?>">
+                </td>
+            <tr>
+                <th></th>
+                <td>
+                    <input type="submit" name="cari" value="Buka Antrian" class="btn btn-success">
+                </td>
+            </tr>
+        </form>
+    </table>
+
+    <?php elseif($depan == FALSE): ?>
+
+
 <?php
 // Fungsi untuk membandingkan umur dari dua data
 function compareUmur($a, $b) {
@@ -14,45 +37,52 @@ function compareUmur($a, $b) {
 
 // Memisahkan data menjadi dua kelompok berdasarkan umur
 $data_umur_diatas_55 = array_filter($data, function ($periksa) {
-    $umur = umur(new DateTime($periksa['tgl_lahir']));
+    $umur = $periksa['umur'];
     return $umur >= 55;
 });
 
 $data_umur_dibawah_55 = array_filter($data, function ($periksa) {
-    $umur = umur(new DateTime($periksa['tgl_lahir']));
+    $umur = $periksa['umur'];
     return $umur < 55;
 });
 
-// Mengurutkan kedua kelompok data
-usort($data_umur_diatas_55, 'compareUmur');
-usort($data_umur_dibawah_55, 'compareUmur');
+// Mengurutkan kelompok umur di atas 55 tahun berdasarkan umur terbesar
+usort($data_umur_diatas_55, function ($a, $b) {
+    $umur_a = umur(new DateTime($a['tgl_lahir']));
+    $umur_b = umur(new DateTime($b['tgl_lahir']));
+    return $umur_b - $umur_a;
+});
+
+// // Mengurutkan kelompok umur di bawah 55 tahun berdasarkan id_periksa
+// usort($data_umur_dibawah_55, function ($a, $b) {
+//     return $a['id_periksa'] - $b['id_periksa'];
+// });
 
 // Menggabungkan kedua kelompok data
 $data = array_merge($data_umur_diatas_55, $data_umur_dibawah_55);
 
 ?>
-<?php $this->load->view('template/header'); ?>
-<?= $this->session->flashdata('pesan') ?>
 
 <div class="row">
     <div class="col-md-12 col-sm-12 ">
         <div class="x_panel">
             <div class="x_title">
+                <h5>Data antrian tgl <?= tgl_indo($tgl) ?></h5>
                 <div class="clearfix"></div>
             </div>
             <div class="x_content">
                 <div class="row">
                     <div class="col-sm-12">
                         <div class="card-box table-responsive">
-                            <table id="datatable-buttons" class="table table-striped table-bordered" style="width:100%">
+                            <table id="datatable" class="table table-striped table-bordered" style="width:100%">
                                 <thead>
                                     <tr>
                                         <th>No</th>
                                         <th>Nama</th>
                                         <th>Umur</th>
                                         <th>Jenis Kelamin</th>
-                                        <th>Tgl Periksa</th>
                                         <th>Keluhan</th>
+                                        <th>Status</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
@@ -62,11 +92,24 @@ $data = array_merge($data_umur_diatas_55, $data_umur_dibawah_55);
                                     <td><?= $periksa['nama'] ?></td>
                                     <td><?= $periksa['umur'] ?></td>
                                     <td><?= $periksa['jenis_kelamin'] ?></td>
-                                    <td><?= tgl_indo($periksa['tgl_periksa']) ?></td>
                                     <td><?= $periksa['keluhan'] ?></td>
                                     <td>
+                                        <?php $stt = $periksa['status']  ?>
+                                            <?php if($stt == 'BL'){ ?>
+                                            <a href="javascript:void(0)" onclick="dalam_antrian('<?= $periksa['id_periksa'] ?>')" class="btn btn-info btn-sm" title="Akan Diperiksa"><i class="fa fa-check-square-o"></i></a> &nbsp;&nbsp;
+                                                <?php }elseif($stt == 'D'){ ?>
+                                                <a href="" class="btn btn-primary" data-toggle="modal" data-target="#edit<?= $periksa['id_periksa'] ?>" title="Update Data"><i class="fa fa-check-square-o"></i></a> &nbsp;&nbsp;
+                                        <?php } ?>
+
+                                        <?php if($stt == 'BL'){ ?>
+                                            <a href="javascript:void(0)" onclick="batal_periksa('<?= $periksa['id_periksa'] ?>')" class="btn btn-danger btn-sm" title="Batal Periksa"><i class="fa fa-ban"></i></a> &nbsp;&nbsp;
+                                                <?php }elseif($stt == 'D'){ ?>
+                                        <?php } ?>
+                                    </td>
+                                    <td>
+
                                         <a href="" class="btn btn-warning" data-toggle="modal"
-                                            data-target="#edit<?= $periksa['id_periksa'] ?>"><i class="fa fa-edit"></i>
+                                            data-target="#editperiksa<?= $periksa['id_periksa'] ?>"><i class="fa fa-edit"></i>
                                             Edit</a>
                                     </td>
                                 </tr>
@@ -82,9 +125,69 @@ $data = array_merge($data_umur_diatas_55, $data_umur_dibawah_55);
     </div>
 </div>
 
+<!-- Modal update periksa-->
+<?php foreach($data as $periksa): ?>
+    <div class="modal fade" id="edit<?= $periksa['id_periksa'] ?>" tabindex="-1" role="dialog"
+    aria-labelledby="modalEditPeriksaLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-default">
+                <h5 class="modal-title" id="modalEditPeriksaLabel">Konfirmasi <?= $judul ?></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" class="text-danger">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="" style="width:100%">
+                        <form id="edit" method="post">
+                            <tr>
+                                <th>Nama</th>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="hidden" name="id_periksa" value="<?= $periksa['id_periksa'] ?>">
+                                    <input type="text" name="" class="form-control" required="" value="<?= $periksa['nama'] ?>" readonly>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Keluhan</th>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <textarea name="keluhan" class="form-control" required="" rows="3" autocomplete="off"
+                                        placeholder="Tulis keluhan pasien" readonly><?= $periksa['keluhan'] ?></textarea>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Catatan</th>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <textarea name="catatan" class="form-control" required="" rows="5" autocomplete="off"
+                                        placeholder="Tulis catatan untuk pasien"></textarea>
+                                </td>
+                            </tr>
+                
+                            <tr>
+                                <td>
+                                    <button href="" class="btn btn-warning" data-dismiss="modal">Kembali</button>
+                                    &nbsp;&nbsp;
+                                    <input type="submit" name="kirim" value="Submit" class="btn btn-success">
+                                </td>
+                            </tr>
+                        </form>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php endforeach; ?>
+    <!-- End Modal -->
+
+
 <!-- modal edit periksa -->
 <?php foreach($data as $periksa): ?>
-<div class="modal fade" id="edit<?= $periksa['id_periksa'] ?>" tabindex="-1" role="dialog"
+<div class="modal fade" id="editperiksa<?= $periksa['id_periksa'] ?>" tabindex="-1" role="dialog"
     aria-labelledby="modalEditPeriksaLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -96,7 +199,7 @@ $data = array_merge($data_umur_diatas_55, $data_umur_dibawah_55);
             </div>
             <div class="modal-body">
                 <table class="" style="width:100%">
-                    <form id="edit" method="post">
+                    <form id="editperiksa" method="post">
                         <input type="hidden" name="id_periksa" value="<?= $periksa['id_periksa'] ?>">
                         <tr>
                             <td><label for="nama">Nama:</label></td>
@@ -136,6 +239,9 @@ $data = array_merge($data_umur_diatas_55, $data_umur_dibawah_55);
                                     <option value="BL"
                                         <?php if ($periksa['status'] == 'BL') { echo 'selected'; } ?>>
                                         Belum Diperiksa</option>
+                                    <option value="D"
+                                        <?php if ($periksa['status'] == 'D') { echo 'selected'; } ?>>
+                                        Diperiksa</option>
                                     <option value="S"
                                         <?php if ($periksa['status'] == 'S') { echo 'selected'; } ?>>
                                         Sudah Diperiksa</option>
@@ -164,8 +270,141 @@ $data = array_merge($data_umur_diatas_55, $data_umur_dibawah_55);
 
 
 <script>
+
+ //ajax dalam_antrian
+ function dalam_antrian(id_periksa) {
+        swal({
+            title: "Konfirmasi Periksa",
+            text: "Pasien Dalam Antrian?",
+            type: "info",
+            showCancelButton: true,
+            confirmButtonColor: "#3CB371",
+            confirmButtonText: "Ya, Dalam Antrian!",
+            cancelButtonColor: "#DD6B55",
+            cancelButtonText: "Tidak, Batalkan!",
+            closeOnConfirm: false,
+            closeOnCancel: true // Set this to true to close the dialog when the cancel button is clicked
+        }).then(function(result) {
+            if (result.value) { // Only delete the data if the user clicked on the confirm button
+                $.ajax({
+                    type: "POST",
+                    url: "<?php echo site_url('superadmin/periksa/diperiksa/') ?>" + id_periksa,
+                    dataType: "json",
+                }).done(function() {
+                    swal({
+                        title: "Berhasil",
+                        text: "Pasien Dalam Antrian",
+                        type: "success",
+                        showConfirmButton: true,
+                        confirmButtonText: "OKEE"
+                    }).then(function() {
+                        location.reload();
+                    });
+                }).fail(function() {
+                    swal({
+                        title: "Gagal",
+                        text: "",
+                        type: "error",
+                        showConfirmButton: true,
+                        confirmButtonText: "OKEE"
+                    }).then(function() {
+                        location.reload();
+                    });
+                });
+            } else { // If the user clicked on the cancel button, show a message indicating that the deletion was cancelled
+                swal("Batal Proses", "", "error");
+            }
+        });
+    }
+
+    //diperiksa
+    $(document).on('submit', '#edit', function(e) {
+                e.preventDefault();
+                var form_data = new FormData(this);
+
+                $.ajax({
+                    type: "POST",
+                    url: "<?php echo site_url('superadmin/periksa/sudah_periksa/') ?>" + form_data.get('id_periksa'),
+                    dataType: "json",
+                    data: form_data,
+                    processData: false,
+                    contentType: false,
+                    //memanggil swall ketika berhasil
+                    success: function(data) {
+                        $('#edit' + form_data.get('id_periksa'));
+                        swal({
+                            title: "Berhasil",
+                            text: "Data Berhasil Disimpan",
+                            type: "success",
+                            showConfirmButton: true,
+                            confirmButtonText: "OKEE",
+                        }).then(function() {
+                            location.reload();
+                        });
+                    },
+                    //memanggil swall ketika gagal
+                    error: function(data) {
+                        swal({
+                            title: "Gagal",
+                            text: "Data Gagal Disimpan",
+                            type: "error",
+                            showConfirmButton: true,
+                            confirmButtonText: "OKEE",
+                        }).then(function() {
+                            location.reload();
+                        });
+                    }
+                });
+            });
+
+    //ajax batal_periksa
+    function batal_periksa(id_periksa) {
+        swal({
+            title: "Konfirmasi Periksa",
+            text: "Pasien Batal Diperiksa?",
+            type: "info",
+            showCancelButton: true,
+            confirmButtonColor: "#3CB371",
+            confirmButtonText: "Ya, Batal Periksa!",
+            cancelButtonColor: "#DD6B55",
+            cancelButtonText: "Tidak, Batalkan!",
+            closeOnConfirm: false,
+            closeOnCancel: true // Set this to true to close the dialog when the cancel button is clicked
+        }).then(function(result) {
+            if (result.value) { // Only delete the data if the user clicked on the confirm button
+                $.ajax({
+                    type: "POST",
+                    url: "<?php echo site_url('superadmin/periksa/batal_periksa/') ?>" + id_periksa,
+                    dataType: "json",
+                }).done(function() {
+                    swal({
+                        title: "Berhasil",
+                        text: "Pasien Batal Diperiksa",
+                        type: "success",
+                        showConfirmButton: true,
+                        confirmButtonText: "OKEE"
+                    }).then(function() {
+                        location.reload();
+                    });
+                }).fail(function() {
+                    swal({
+                        title: "Gagal",
+                        text: "",
+                        type: "error",
+                        showConfirmButton: true,
+                        confirmButtonText: "OKEE"
+                    }).then(function() {
+                        location.reload();
+                    });
+                });
+            } else { // If the user clicked on the cancel button, show a message indicating that the deletion was cancelled
+                swal("Batal Proses", "", "error");
+            }
+        });
+    }
+
 //edit file
-$(document).on('submit', '#edit', function(e) {
+$(document).on('submit', '#editperiksa', function(e) {
     e.preventDefault();
     var form_data = new FormData(this);
 
@@ -179,7 +418,7 @@ $(document).on('submit', '#edit', function(e) {
         contentType: false,
         //memanggil swall ketika berhasil
         success: function(data) {
-            $('#edit' + form_data.get('id_periksa'));
+            $('#editperiksa' + form_data.get('id_periksa'));
             swal({
                 title: "Berhasil",
                 text: "Data Berhasil Diubah",
@@ -251,6 +490,7 @@ function hapusperiksa(id_periksa) {
     });
 }
 </script>
+<?php endif; ?>
 
 <?php $this->load->view('template/footer'); ?>
 

@@ -1,3 +1,25 @@
+<?php $this->load->view('template/header'); ?>
+<?= $this->session->flashdata('pesan') ?>
+
+<?php if($depan == TRUE): ?>
+<table class="table table-striped table">
+        <form action="" method="POST">
+            <tr>
+                <th class="col-sm-3">Pilih Tanggal</th>
+                <td>
+                    <input type="date" name="tgl" class="form-control" value="<?= date("Y-m-d") ?>">
+                </td>
+            <tr>
+                <th></th>
+                <td>
+                    <input type="submit" name="cari" value="Buka Antrian" class="btn btn-success">
+                </td>
+            </tr>
+        </form>
+    </table>
+
+    <?php elseif($depan == FALSE): ?>
+    
 <?php
 // Fungsi untuk membandingkan umur dari dua data
 function compareUmur($a, $b) {
@@ -14,30 +36,37 @@ function compareUmur($a, $b) {
 
 // Memisahkan data menjadi dua kelompok berdasarkan umur
 $data_umur_diatas_55 = array_filter($data, function ($periksa) {
-    $umur = umur(new DateTime($periksa['tgl_lahir']));
+    $umur = $periksa['umur'];
     return $umur >= 55;
 });
 
 $data_umur_dibawah_55 = array_filter($data, function ($periksa) {
-    $umur = umur(new DateTime($periksa['tgl_lahir']));
+    $umur = $periksa['umur'];
     return $umur < 55;
 });
 
-// Mengurutkan kedua kelompok data
-usort($data_umur_diatas_55, 'compareUmur');
-usort($data_umur_dibawah_55, 'compareUmur');
+// Mengurutkan kelompok umur di atas 55 tahun berdasarkan umur terbesar
+usort($data_umur_diatas_55, function ($a, $b) {
+    $umur_a = umur(new DateTime($a['tgl_lahir']));
+    $umur_b = umur(new DateTime($b['tgl_lahir']));
+    return $umur_b - $umur_a;
+});
+
+// // Mengurutkan kelompok umur di bawah 55 tahun berdasarkan id_periksa
+// usort($data_umur_dibawah_55, function ($a, $b) {
+//     return $a['id_periksa'] - $b['id_periksa'];
+// });
 
 // Menggabungkan kedua kelompok data
 $data = array_merge($data_umur_diatas_55, $data_umur_dibawah_55);
 
 ?>
-<?php $this->load->view('template/header'); ?>
-<?= $this->session->flashdata('pesan') ?>
 
 <div class="row">
     <div class="col-md-12 col-sm-12 ">
         <div class="x_panel">
             <div class="x_title">
+                <h5>Data Sudah Periksa tgl <?= tgl_indo($tgl) ?></h5>
                 <div class="clearfix"></div>
             </div>
             <div class="x_content">
@@ -51,8 +80,8 @@ $data = array_merge($data_umur_diatas_55, $data_umur_dibawah_55);
                                         <th>Nama</th>
                                         <th>Umur</th>
                                         <th>Jenis Kelamin</th>
-                                        <th>Tgl Periksa</th>
                                         <th>Keluhan</th>
+                                        <th>Catatan Dokter</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
@@ -62,8 +91,8 @@ $data = array_merge($data_umur_diatas_55, $data_umur_dibawah_55);
                                     <td><?= $periksa['nama'] ?></td>
                                     <td><?= $periksa['umur'] ?></td>
                                     <td><?= $periksa['jenis_kelamin'] ?></td>
-                                    <td><?= tgl_indo($periksa['tgl_periksa']) ?></td>
                                     <td><?= $periksa['keluhan'] ?></td>
+                                    <td><?= $periksa['catatan'] ?></td>
                                     <td>
                                         <a href="" class="btn btn-warning" data-toggle="modal"
                                             data-target="#edit<?= $periksa['id_periksa'] ?>"><i class="fa fa-edit"></i>
@@ -125,7 +154,14 @@ $data = array_merge($data_umur_diatas_55, $data_umur_dibawah_55);
                         </tr>
                         <tr>
                             <td><textarea name="keluhan" id="keluhan" class="form-control" cols="30" rows="5"
-                                    required><?= $periksa['keluhan'] ?></textarea></td>
+                                    required readonly><?= $periksa['keluhan'] ?></textarea></td>
+                        </tr>
+                        <tr>
+                            <td><label for="catatan">Catatan dari Dokter:</label></td>
+                        </tr>
+                        <tr>
+                            <td><textarea name="catatan" id="catatan" class="form-control" cols="30" rows="5"
+                                    required readonly><?= $periksa['catatan'] ?></textarea></td>
                         </tr>
                         <tr>
                             <td><label for="status">Status:</label></td>
@@ -136,6 +172,9 @@ $data = array_merge($data_umur_diatas_55, $data_umur_dibawah_55);
                                     <option value="BL"
                                         <?php if ($periksa['status'] == 'BL') { echo 'selected'; } ?>>
                                         Belum Diperiksa</option>
+                                    <option value="D"
+                                        <?php if ($periksa['status'] == 'D') { echo 'selected'; } ?>>
+                                        Diperiksa</option>
                                     <option value="S"
                                         <?php if ($periksa['status'] == 'S') { echo 'selected'; } ?>>
                                         Sudah Diperiksa</option>
@@ -251,6 +290,8 @@ function hapusperiksa(id_periksa) {
     });
 }
 </script>
+
+<?php endif; ?>
 
 <?php $this->load->view('template/footer'); ?>
 

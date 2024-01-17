@@ -60,6 +60,9 @@
     }elseif($this->session->userdata('level') == "3"){
     $id  = $this->session->userdata('id_pengguna');
     $data= $this->db->get_where('tb_pengguna',array('id_pengguna'=>$id))->row_array();
+    }elseif($this->session->userdata('level') == "4"){
+    $id  = $this->session->userdata('id_pasien');
+    $data= $this->db->get_where('tb_pasien',array('id_pasien'=>$id))->row_array();
     }
   ?>
   <body class="nav-md ">
@@ -97,6 +100,13 @@
                           <?php } else { ?>
                             <img src="<?= base_url('themes/foto_profile') ?>/<?= $data['foto_profile'] ?>" alt="..." class="img-circle profile_img">
                         <?php } ?>
+
+                        <?php }elseif($this->session->userdata('level') == "4"){ ?>
+                          <?php if ($data['foto_profile'] == "") { ?>
+                            <img src="<?= base_url('themes/no_images.png') ?>" alt="..." class="img-circle profile_img">
+                          <?php } else { ?>
+                            <img src="<?= base_url('themes/foto_profile') ?>/<?= $data['foto_profile'] ?>" alt="..." class="img-circle profile_img">
+                        <?php } ?>
                 <?php } ?>
 
               </div>
@@ -109,6 +119,8 @@
                         Admin
                             <?php }elseif($this->session->userdata('level') == "3"){ ?>
                             User
+                                <?php }elseif($this->session->userdata('level') == "4"){ ?>
+                                Pasien
                                 <?php } ?>
                 </span>
               </div>
@@ -189,6 +201,22 @@
                 <h3>Live On</h3>
                 <ul class="nav side-menu">
                   <li><a href="<?= base_url('user/profile') ?>"><i class="fa fa-user"></i> Profile</a></li>
+                </ul>
+              </div>
+
+              <?php }elseif($this->session->userdata('level') == "4"){ ?>
+                <div class="menu_section">
+                <h3>General</h3>
+                <ul class="nav side-menu">
+                  <li><a href="<?= base_url('pasien/home') ?>"><i class="fa fa-home"></i> Home</a></li>
+                  <li><a href="<?= base_url('pasien/periksa/add_periksa') ?>"><i class="fa fa-child"></i> Daftar Antrian</a></li>
+                  <li><a href="<?= base_url('pasien/periksa') ?>"><i class="fa fa-hospital-o"></i> Data Riwayat Periksa</a></li>
+                </ul>
+              </div>
+              <div class="menu_section">
+                <h3>Live On</h3>
+                <ul class="nav side-menu">
+                  <li><a href="<?= base_url('pasien/profile') ?>"><i class="fa fa-user"></i> Profile</a></li>
                 </ul>
               </div>
 
@@ -276,7 +304,31 @@
                         </div>
                       </li>
                     </ul>
-                        <?php }elseif($this->session->userdata('level') == "3"){ ?>
+                      <?php }elseif($this->session->userdata('level') == "3"){ ?>
+                      <ul class=" navbar-right">
+                        <li class="nav-item dropdown open" style="padding-left: 15px;">
+                          <a href="javascript:;" class="user-profile dropdown-toggle" aria-haspopup="true" id="navbarDropdown" data-toggle="dropdown" aria-expanded="false">
+                            <?php if ($data['foto_profile'] == "") { ?>
+                              <img src="<?= base_url('themes/no_images.png') ?>" alt=""> <?= $data['nama'] ?>
+                            <?php } else { ?>
+                              <img src="<?= base_url('themes/foto_profile') ?>/<?= $data['foto_profile'] ?>" alt=""> <?= $data['nama'] ?>
+                            <?php } ?>
+                          </a>
+                          <div class="dropdown-menu dropdown-usermenu pull-right" aria-labelledby="navbarDropdown">
+                            <!-- menampilkan foto profile -->
+                            <div class="dropdown-item">
+                              <?php if ($data['foto_profile'] == "") { ?>
+                                <img src="<?= base_url('themes/no_images.png') ?>" alt="" class="img-circle profile_img">
+                              <?php } else { ?>
+                                <img src="<?= base_url('themes/foto_profile') ?>/<?= $data['foto_profile'] ?>" alt="" class="img-circle profile_img">
+                              <?php } ?>
+                            </div>
+                            <a class="dropdown-item"  href="<?= base_url('admin/profile') ?>"> Profile</a>
+                            <a href="javascript:void(0)" onclick="keluar()" class="dropdown-item"><i class="fa fa-sign-out pull-right"></i> Log Out</a>
+                          </div>
+                        </li>
+                      </ul>
+                        <?php }elseif($this->session->userdata('level') == "4"){ ?>
                         <ul class=" navbar-right">
                           <li class="nav-item dropdown open" style="padding-left: 15px;">
                             <a href="javascript:;" class="user-profile dropdown-toggle" aria-haspopup="true" id="navbarDropdown" data-toggle="dropdown" aria-expanded="false">
@@ -295,7 +347,7 @@
                                   <img src="<?= base_url('themes/foto_profile') ?>/<?= $data['foto_profile'] ?>" alt="" class="img-circle profile_img">
                                 <?php } ?>
                               </div>
-                              <a class="dropdown-item"  href="<?= base_url('user/profile') ?>"> Profile</a>
+                              <a class="dropdown-item"  href="<?= base_url('pasien/profile') ?>"> Profile</a>
                               <a href="javascript:void(0)" onclick="keluar()" class="dropdown-item"><i class="fa fa-sign-out pull-right"></i> Log Out</a>
                             </div>
                           </li>

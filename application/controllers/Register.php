@@ -11,7 +11,7 @@ class Register extends CI_controller
       $this->load->helper('url');
       $this->load->database();
       $this->load->library('session');
-      $this->load->model('m_pengguna');
+      $this->load->model('m_pasien');
       $this->load->library('form_validation');
   }
 
@@ -26,85 +26,126 @@ class Register extends CI_controller
         return $string;
     }
     
-     //mengambil id dokter urut terakhir
-     private function id_pengguna_urut($value='')
+     //mengambil id urut terakhir
+     private function id_pasien_urut($value='')
      {
-     $this->m_pengguna->id_urut();
+     $this->m_pasien->id_urut();
      $query   = $this->db->get();
      $data    = $query->row_array();
-     $id      = $data['id_pengguna'];
+     $id      = $data['id_pasien'];
      $karakter= $this->acak_id(6);
      $urut    = substr($id, 1, 3);
      $tambah  = (int) $urut + 1;
      
      if (strlen($tambah) == 1){
-     $newID = "A"."00".$tambah.$karakter;
+     $newID = "P"."00".$tambah.$karakter;
          }else if (strlen($tambah) == 2){
-         $newID = "A"."0".$tambah.$karakter;
+         $newID = "P"."0".$tambah.$karakter;
              }else (strlen($tambah) == 3){
-             $newID = "A".$tambah.$karakter
+             $newID = "P".$tambah.$karakter
              };
          return $newID;
      }
 
-  //API add 
+  //API add
   public function api_add($value='')
   {
     $rules = array(
       array(
         'field' => 'nama',
-        'label' => 'Nama',
+        'label' => 'Nama Pasien',
         'rules' => 'required',
         'errors' => array(
-            'required' => 'Nama tidak boleh kosong',
+            'required' => 'Nama pasien tidak boleh kosong',
+          ),
         ),
-      ),
       array(
-        'field' => 'no_hp',
-        'label' => 'NO HP',
-        'rules' => 'required|is_unique[tb_pengguna.no_hp]',
-        'errors' => array(
-            'required' => 'No HP tidak boleh kosong',
-            'is_unique' => 'No HP sudah terdaftar',
-        ),
-      ),
+          'field' => 'tgl_lahir',
+          'label' => 'Tanggal Lahir',
+          'rules' => 'required',
+          'errors' => array(
+              'required' => 'Tanggal Lahir tidak boleh kosong',
+            ),
+          ),
       array(
-        'field' => 'keterangan',
-        'label' => 'Keterangan',
-        'rules' => 'required',
-        'errors' => array(
-            'required' => 'Keterangan tidak boleh kosong',
-        ),
-      ),
+          'field' => 'jenis_kelamin',
+          'label' => 'Jenis Kelamin',
+          'rules' => 'required',
+          'errors' => array(
+              'required' => 'Jenis Kelamin tidak boleh kosong',
+            ),
+          ),
       array(
-        'field' => 'email',
-        'label' => 'Email',
-        'rules' => 'required|valid_email|is_unique[tb_pengguna.email]',
-        'errors' => array(
-            'required' => 'Email tidak boleh kosong',
-            'valid_email' => 'Email tidak valid',
-            'is_unique' => 'Email sudah terdaftar',
-        ),
-      ),
-
+          'field' => 'no_hp',
+          'label' => 'No HP',
+          'rules' => 'required|is_unique[tb_pasien.no_hp]',
+          'errors' => array(
+              'required' => 'No HP tidak boleh kosong',
+              'is_unique' => 'No HP sudah terdaftar, silahkan gunakan No HP lain',
+            ),
+          ),
+      array(
+          'field' => 'alamat',
+          'label' => 'Alamat',
+          'rules' => 'required',
+          'errors' => array(
+              'required' => 'Alamat tidak boleh kosong',
+            ),
+          ),
+      array(
+          'field' => 'kec',
+          'label' => 'Kecamatan',
+          'rules' => 'required',
+          'errors' => array(
+              'required' => 'Kecamatan tidak boleh kosong',
+            ),
+          ),
+      array(
+          'field' => 'kab',
+          'label' => 'Kabupaten',
+          'rules' => 'required',
+          'errors' => array(
+              'required' => 'Kabupaten tidak boleh kosong',
+            ),
+          ),
+      array(
+          'field' => 'email',
+          'label' => 'Email',
+          'rules' => 'required|is_unique[tb_pasien.email]',
+          'errors' => array(
+              'required' => 'Email tidak boleh kosong',
+              'is_unique' => 'Email sudah terdaftar, silahkan gunakan Email lain',
+            ),
+          ),
+      array(
+          'field' => 'password',
+          'label' => 'Password',
+          'rules' => 'required',
+          'errors' => array(
+              'required' => 'Password tidak boleh kosong',
+            ),
+          ),
     );
     $this->form_validation->set_rules($rules);
     if ($this->form_validation->run() == FALSE) {
       $response = [
         'status' => false,
-        'message' => validation_errors()
+        'message' => validation_errors(),
       ];
     } else {
       $SQLinsert = [
-        'id_pengguna'       =>$this->id_pengguna_urut(),
-        'nama'              =>$this->input->post('nama'),
-        'no_hp'              =>$this->input->post('no_hp'),
-        'keterangan'        =>$this->input->post('keterangan'),
-        'email'             =>$this->input->post('email'),
-        'password'          =>md5($this->input->post('password')),
-        'id_level'          =>'3',
+        'id_pasien'      =>$this->id_pasien_urut(),
+        'nama'           =>$this->input->post('nama'),
+        'tgl_lahir'      =>$this->input->post('tgl_lahir'),
+        'jenis_kelamin'  =>$this->input->post('jenis_kelamin'),
+        'no_hp'          =>$this->input->post('no_hp'),
+        'alamat'         =>$this->input->post('alamat'),
+        'kec'            =>$this->input->post('kec'),
+        'kab'            =>$this->input->post('kab'),
+        'email'          =>$this->input->post('email'),
+        'password'       =>md5($this->input->post('password')),
       ];
-      if ($this->m_pengguna->add($SQLinsert)) {
+      if ($this->m_pasien->add($SQLinsert)) {
         $response = [
           'status' => true,
           'message' => 'Berhasil menambahkan data'

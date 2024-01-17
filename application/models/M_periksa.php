@@ -10,41 +10,57 @@ private $table = 'tb_periksa';
 private $table2 = 'tb_pasien';
 
 //View
-public function view($value='')
+public function view($tgl='')
 {
   $this->db->select ('*');
   $this->db->from ($this->table);
   $this->db->join($this->table2, 'tb_pasien.id_pasien = tb_periksa.id_pasien');
+  $this->db->where('tgl_periksa', $tgl);
+  $this->db->where_in('status', array('BL', 'D', 'S'));
   $this->db->order_by('id_periksa', 'ASC');
   return $this->db->get();
 }
 
-public function view_sdh($value='')
+public function view_diperiksa($tgl='')
+{
+  $this->db->select ('*');
+  $this->db->from ($this->table);
+  $this->db->join($this->table2, 'tb_pasien.id_pasien = tb_periksa.id_pasien');
+  $this->db->where('status', 'D');
+  $this->db->where('tgl_periksa', $tgl);
+  $this->db->order_by('id_periksa', 'ASC');
+  return $this->db->get();
+}
+
+public function view_sdh($tgl='')
 {
   $this->db->select ('*');
   $this->db->from ($this->table);
   $this->db->join($this->table2, 'tb_pasien.id_pasien = tb_periksa.id_pasien');
   $this->db->where('status', 'S');
+  $this->db->where('tgl_periksa', $tgl);
   $this->db->order_by('id_periksa', 'ASC');
   return $this->db->get();
 }
 
-public function view_blm($value='')
+public function view_blm($tgl='')
 {
   $this->db->select ('*');
   $this->db->from ($this->table);
   $this->db->join($this->table2, 'tb_pasien.id_pasien = tb_periksa.id_pasien');
-  $this->db->where('status', 'BL');
+  $this->db->where('tgl_periksa', $tgl);
+  $this->db->where_in('status', array('BL', 'D'));
   $this->db->order_by('id_periksa', 'ASC');
   return $this->db->get();
 }
 
-public function view_btl($value='')
+public function view_btl($tgl='')
 {
   $this->db->select ('*');
   $this->db->from ($this->table);
   $this->db->join($this->table2, 'tb_pasien.id_pasien = tb_periksa.id_pasien');
   $this->db->where('status', 'BTL');
+  $this->db->where('tgl_periksa', $tgl);
   $this->db->order_by('id_periksa', 'ASC');
   return $this->db->get();
 }
@@ -74,6 +90,18 @@ public function update($id='',$SQLupdate){
 public function delete($id=''){
   $this->db->where('id_periksa', $id);
   return $this->db-> delete($this->table);
+}
+
+//untuk page pasien login
+public function view_id_pasien($id='')
+{
+  $id = $this->session->userdata['id_pasien'];
+  $this->db->select('*');
+  $this->db->from($this->table);
+  $this->db->join($this->table2, 'tb_pasien.id_pasien = tb_periksa.id_pasien');
+  $this->db->where('tb_pasien.id_pasien', $id);
+  $this->db->order_by('id_periksa', 'DESC');
+  return $this->db->get();
 }
 
 }

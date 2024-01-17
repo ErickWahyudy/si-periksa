@@ -34,38 +34,97 @@ class Periksa extends CI_controller
       $this->load->view('superadmin/periksa/add',$view);
     }
 
-    //sdh periksa
-    public function sdh_periksa($value='')
+    //diperiksa
+    public function data_periksa($tgl='')
     {
-     $view = array('judul'      =>'Data Sudah Periksa',
-                    'aksi'      =>'lihat',
-                    'data'      =>$this->m_periksa->view_sdh()->result_array(),
-                  );
+      if (isset($_POST['cari'])) {
+        $tgl = $this->input->post('tgl');
 
-      $this->load->view('superadmin/periksa/sdh_periksa',$view);
-    }
+        $view = array('judul'      =>'Data Periksa',
+                        'aksi'      =>'lihat',
+                        'data'      =>$this->m_periksa->view_diperiksa($tgl)->result_array(),
+                        'tgl'       =>$tgl,
+                        'depan'    =>FALSE,
+                      );
+
+          $this->load->view('superadmin/periksa/diperiksa',$view);
+        }else{
+          $view = array('judul'     =>'Buka Data Periksa',
+                        'aksi'      =>'buka_periksa',
+                        'depan'    =>TRUE,
+                      );
+          $this->load->view('superadmin/periksa/diperiksa',$view);
+        }
+      }
+
+    //sdh periksa
+    public function sdh_periksa($tgl='')
+    {
+      if (isset($_POST['cari'])) {
+        $tgl = $this->input->post('tgl');
+
+        $view = array('judul'      =>'Data Sudah Periksa',
+                        'aksi'      =>'lihat',
+                        'data'      =>$this->m_periksa->view_sdh($tgl)->result_array(),
+                        'tgl'       =>$tgl,
+                        'depan'    =>FALSE,
+                      );
+
+          $this->load->view('superadmin/periksa/sdh_periksa',$view);
+        }else{
+          $view = array('judul'     =>'Buka Data Periksa',
+                        'aksi'      =>'buka_periksa',
+                        'depan'    =>TRUE,
+                      );
+          $this->load->view('superadmin/periksa/sdh_periksa',$view);
+        }
+      }
 
     //Belum periksa
-    public function blm_periksa($value='')
+    public function blm_periksa($tgl='')
     {
-     $view = array('judul'      =>'Data Belum Periksa',
-                    'aksi'      =>'lihat',
-                    'data'      =>$this->m_periksa->view_blm()->result_array(),
-                  );
+      if (isset($_POST['cari'])) {
+        $tgl = $this->input->post('tgl');
 
-      $this->load->view('superadmin/periksa/blm_periksa',$view);
-    }
+        $view = array('judul'      =>'Data Antrian Periksa',
+                        'aksi'      =>'lihat',
+                        'data'      =>$this->m_periksa->view_blm($tgl)->result_array(),
+                        'tgl'       =>$tgl,
+                        'depan'    =>FALSE,
+                      );
+
+          $this->load->view('superadmin/periksa/blm_periksa',$view);
+        }else{
+          $view = array('judul'     =>'Buka Data Antrian',
+                        'aksi'      =>'buka_antrian',
+                        'depan'    =>TRUE,
+                    );
+          $this->load->view('superadmin/periksa/blm_periksa',$view);
+        }
+      }
 
     //Batal periksa
-    public function btl_periksa($value='')
+    public function btl_periksa($tgl='')
     {
-     $view = array('judul'      =>'Data Batal Periksa',
-                    'aksi'      =>'lihat',
-                    'data'      =>$this->m_periksa->view_btl()->result_array(),
-                  );
+      if (isset($_POST['cari'])) {
+        $tgl = $this->input->post('tgl');
 
-      $this->load->view('superadmin/periksa/btl_periksa',$view);
-    }
+        $view = array('judul'      =>'Data Batal Periksa',
+                        'aksi'      =>'lihat',
+                        'data'      =>$this->m_periksa->view_btl($tgl)->result_array(),
+                        'tgl'       =>$tgl,
+                        'depan'    =>FALSE,
+                      );
+
+          $this->load->view('superadmin/periksa/btl_periksa',$view);
+        }else{
+          $view = array('judul'     =>'Buka Data Batal Periksa',
+                        'aksi'      =>'buka_btlperiksa',
+                        'depan'    =>TRUE,
+                    );
+          $this->load->view('superadmin/periksa/btl_periksa',$view);
+        }
+      }
 
     private function acak_id($panjang)
     {
@@ -247,5 +306,103 @@ class Periksa extends CI_controller
           ->set_content_type('application/json')
           ->set_output(json_encode($response));
       }
+
+
+    //API diperiksa
+    public function diperiksa($id='') {
+      if(empty($id)){
+        $response = [
+          'status' => false,
+          'message' => 'Tidak ada data yang dipilih'
+        ];
+      }else{
+        $SQLupdate=array(
+          'status'                    =>'D'
+        );
+        $cek=$this->m_periksa->update($id,$SQLupdate);
+        if($cek){
+          $response = [
+            'status' => true,
+            'message' => 'Berhasil'
+          ];
+          //mengirim email ke pelanggan dengan phpmailer
+          //dibawahini untuk script phpmailer
+        }else{
+          $response = [
+            'status' => false,
+            'message' => 'Gagal'
+          ];
+        }
+      }
+      echo json_encode($response);
+    }
+
+     //API sdh periksa
+     public function sudah_periksa($id='', $SQLupdate='')
+     {
+       $rules = array(
+         array(
+           'field' => 'catatan',
+           'label' => 'catatan',
+           'rules' => 'required'
+         )
+       );
+       $this->form_validation->set_rules($rules);
+       if ($this->form_validation->run() == FALSE) {
+         $response = [
+           'status' => false,
+           'message' => 'Tidak ada data'
+         ];
+       } else {
+         $SQLupdate = [
+           'catatan'                   =>$this->input->post('catatan'),
+           'status'                    =>'S',
+         ];
+         if ($this->m_periksa->update($id, $SQLupdate)) {
+           $response = [
+             'status' => true,
+             'message' => 'Berhasil mengubah data'
+           ];
+         } else {
+           $response = [
+             'status' => false,
+             'message' => 'Gagal mengubah data'
+           ];
+         }
+       }
+       $this->output
+         ->set_content_type('application/json')
+         ->set_output(json_encode($response));
+     }
+
+    //API batal_periksa
+    public function batal_periksa($id='') {
+      if(empty($id)){
+        $response = [
+          'status' => false,
+          'message' => 'Tidak ada data yang dipilih'
+        ];
+      }else{
+        $SQLupdate=array(
+          'status'                    =>'BTL'
+        );
+        $cek=$this->m_periksa->update($id,$SQLupdate);
+        if($cek){
+          $response = [
+            'status' => true,
+            'message' => 'Berhasil'
+          ];
+          //mengirim email ke pelanggan dengan phpmailer
+          //dibawahini untuk script phpmailer
+        }else{
+          $response = [
+            'status' => false,
+            'message' => 'Gagal'
+          ];
+        }
+      }
+      echo json_encode($response);
+    }
+
 	
 }
