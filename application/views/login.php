@@ -87,6 +87,10 @@
               </div>
 
               <div>
+                <input type="text" class="form-control" name="nik" placeholder="NIK" required="" autocomplete="off" maxlength="16" minlength="16">
+              </div>
+
+              <div>
                 <input type="date" class="form-control" name="tgl_lahir" placeholder="Tanggal Lahir" required="" autocomplete="off" value="<?= date('Y-m-d') ?>" />
               </div>
                   <br>
@@ -122,7 +126,13 @@
               </div>
                   <br>
               <div>
-                  <input type="text" class="form-control" name="alamat" id="kelurahan" placeholder="Alamat" required="" autocomplete="off" disabled>
+                  <select id="kelurahan" name="kelurahan" class="form-control select2" required="" onchange="populateAlamat()" disabled>
+                    <option value=''>Pilih Kelurahan/Desa</option>
+                  </select>
+              </div>
+                  <br>
+              <div>
+                  <input type="text" class="form-control" name="alamat" id="alamat" placeholder="Alamat" required="" autocomplete="off" disabled>
               </div>
               <div>
                 <input type="email" class="form-control" name="email" placeholder="Email" required="" autocomplete="off" />
@@ -211,98 +221,120 @@
       });
   });
   
- //API WIlayah
- fetch('https://kanglerian.github.io/api-wilayah-indonesia/api/provinces.json')
-      .then(response => response.json())
-      .then(provinces => {
-        var data = provinces;
-        var tampung = '<option value="">Pilih Provinsi</option>';
-        data.forEach(element => {
-          tampung += `<option data-region="${element.id}" value="${element.name}">${element.name}</option>`;
-        });
-        document.getElementById('provinsi').innerHTML = tampung;
-      })
-
-    function populateKabupaten() {
-      var provinsi = document.getElementById('provinsi').value;
-
-      // Menonaktifkan dropdown kabupaten
-      document.getElementById('kabupaten').disabled = true;
-
-      // Menonaktifkan dropdown kecamatan
-      document.getElementById('kecamatan').disabled = true;
-
-      // Menonaktifkan input alamat
-      document.getElementById('kelurahan').disabled = true;
-
-      if (provinsi) {
-        var region = document.querySelector(`#provinsi option[value="${provinsi}"]`).dataset.region;
-        fetch(`https://kanglerian.github.io/api-wilayah-indonesia/api/regencies/${region}.json`)
+ //API Wilayah
+fetch('https://kanglerian.github.io/api-wilayah-indonesia/api/provinces.json')
           .then(response => response.json())
-          .then(regencies => {
-            var data = regencies;
-            var tampung = '<option value="">Pilih Kabupaten/Kota</option>';
+          .then(provinces => {
+            var data = provinces;
+            var tampung = '<option value="">Pilih Provinsi</option>';
             data.forEach(element => {
               tampung += `<option data-region="${element.id}" value="${element.name}">${element.name}</option>`;
             });
-            document.getElementById('kabupaten').innerHTML = tampung;
-
-            // Mengaktifkan dropdown kabupaten
-            document.getElementById('kabupaten').disabled = false;
+            document.getElementById('provinsi').innerHTML = tampung;
           })
-      }
-    }
 
-    function populateKecamatan() {
-            var kabupaten = document.getElementById('kabupaten').value;
+        function populateKabupaten() {
+          var provinsi = document.getElementById('provinsi').value;
 
-            // Menonaktifkan dropdown kecamatan
-            document.getElementById('kecamatan').disabled = true;
+          // Menonaktifkan dropdown kabupaten
+          document.getElementById('kabupaten').disabled = true;
 
-            // Menonaktifkan input alamat
-            document.getElementById('kelurahan').disabled = true;
+          // Menonaktifkan dropdown kecamatan
+          document.getElementById('kecamatan').disabled = true;
 
-            if (kabupaten) {
-              var region = document.querySelector(`#kabupaten option[value="${kabupaten}"]`).dataset.region;
-              fetch(`https://kanglerian.github.io/api-wilayah-indonesia/api/districts/${region}.json`)
-                .then(response => response.json())
-                .then(districts => {
-                  var data = districts;
-                  var tampung = '<option value="">Pilih Kecamatan</option>';
-                  data.forEach(element => {
-                    tampung += `<option data-region="${element.id}" value="${element.name}">${element.name}</option>`;
-                  });
-                  document.getElementById('kecamatan').innerHTML = tampung;
+          // Menonaktifkan input kelurahan
+          document.getElementById('kelurahan').disabled = true;
 
-                  // Mengaktifkan dropdown kecamatan
-                  document.getElementById('kecamatan').disabled = false;
-                })
-            }
+          // Menonaktifkan input alamat
+          document.getElementById('alamat').disabled = true;
+
+          if (provinsi) {
+            var region = document.querySelector(`#provinsi option[value="${provinsi}"]`).dataset.region;
+            fetch(`https://kanglerian.github.io/api-wilayah-indonesia/api/regencies/${region}.json`)
+              .then(response => response.json())
+              .then(regencies => {
+                var data = regencies;
+                var tampung = '<option value="">Pilih Kabupaten/Kota</option>';
+                data.forEach(element => {
+                  tampung += `<option data-region="${element.id}" value="${element.name}">${element.name}</option>`;
+                });
+                document.getElementById('kabupaten').innerHTML = tampung;
+
+                // Mengaktifkan dropdown kabupaten
+                document.getElementById('kabupaten').disabled = false;
+              })
           }
+        }
 
-          function populateKelurahan() {
-            var kecamatan = document.getElementById('kecamatan').value;
+        function populateKecamatan() {
+                var kabupaten = document.getElementById('kabupaten').value;
 
-            // Menonaktifkan input alamat
-            document.getElementById('kelurahan').disabled = true;
+                // Menonaktifkan dropdown kecamatan
+                document.getElementById('kecamatan').disabled = true;
 
-            if (kecamatan) {
-              var region = document.querySelector(`#kecamatan option[value="${kecamatan}"]`).dataset.region;
-              fetch(`https://kanglerian.github.io/api-wilayah-indonesia/api/villages/${region}.json`)
-                .then(response => response.json())
-                .then(villages => {
-                  var data = villages;
-                  var tampung = '<option value="">Pilih Kelurahan/Desa</option>';
-                  data.forEach(element => {
-                    tampung += `<option value="${element.name}">${element.name}</option>`;
-                  });
-                  document.getElementById('kelurahan').innerHTML = tampung;
+                // Menonaktifkan input kelurahan
+                document.getElementById('kelurahan').disabled = true;
 
+                // Menonaktifkan input alamat
+                document.getElementById('alamat').disabled = true;
+
+                if (kabupaten) {
+                  var region = document.querySelector(`#kabupaten option[value="${kabupaten}"]`).dataset.region;
+                  fetch(`https://kanglerian.github.io/api-wilayah-indonesia/api/districts/${region}.json`)
+                    .then(response => response.json())
+                    .then(districts => {
+                      var data = districts;
+                      var tampung = '<option value="">Pilih Kecamatan</option>';
+                      data.forEach(element => {
+                        tampung += `<option data-region="${element.id}" value="${element.name}">${element.name}</option>`;
+                      });
+                      document.getElementById('kecamatan').innerHTML = tampung;
+
+                      // Mengaktifkan dropdown kecamatan
+                      document.getElementById('kecamatan').disabled = false;
+                    })
+                }
+              }
+
+              function populateKelurahan() {
+                var kecamatan = document.getElementById('kecamatan').value;
+
+                // Menonaktifkan input kelurahan
+                document.getElementById('kelurahan').disabled = true;
+
+                // Menonaktifkan input alamat
+                document.getElementById('alamat').disabled = true;
+
+                if (kecamatan) {
+                  var region = document.querySelector(`#kecamatan option[value="${kecamatan}"]`).dataset.region;
+                  fetch(`https://kanglerian.github.io/api-wilayah-indonesia/api/villages/${region}.json`)
+                    .then(response => response.json())
+                    .then(villages => {
+                      var data = villages;
+                      var tampung = '<option value="">Pilih Kelurahan/Desa</option>';
+                      data.forEach(element => {
+                        tampung += `<option value="${element.name}">${element.name}</option>`;
+                      });
+                      document.getElementById('kelurahan').innerHTML = tampung;
+
+                      // Mengaktifkan input alamat
+                      document.getElementById('kelurahan').disabled = false;
+                    })
+                }
+              }
+              
+              function populateAlamat() {
+                var kelurahan = document.getElementById('kelurahan').value;
+
+                // Menonaktifkan input alamat
+                document.getElementById('alamat').disabled = true;
+
+                if (alamat) {
                   // Mengaktifkan input alamat
-                  document.getElementById('kelurahan').disabled = false;
-                })
-            }
-          }
+                  document.getElementById('alamat').disabled = false;
+                }
+
+                }
 
     $(function () {
     //Initialize Select2 Elements

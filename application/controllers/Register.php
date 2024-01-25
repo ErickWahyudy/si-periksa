@@ -60,6 +60,15 @@ class Register extends CI_controller
           ),
         ),
       array(
+          'field' => 'nik',
+          'label' => 'NIK',
+          'rules' => 'required|is_unique[tb_pasien.nik]',
+          'errors' => array(
+              'required' => 'NIK tidak boleh kosong',
+              'is_unique' => 'NIK sudah terdaftar',
+            ),
+          ),
+      array(
           'field' => 'tgl_lahir',
           'label' => 'Tanggal Lahir',
           'rules' => 'required',
@@ -90,6 +99,14 @@ class Register extends CI_controller
           'rules' => 'required',
           'errors' => array(
               'required' => 'Alamat tidak boleh kosong',
+            ),
+          ),
+      array(
+          'field' => 'kelurahan',
+          'label' => 'Kelurahan',
+          'rules' => 'required',
+          'errors' => array(
+              'required' => 'Kelurahan tidak boleh kosong',
             ),
           ),
       array(
@@ -136,10 +153,12 @@ class Register extends CI_controller
       $SQLinsert = [
         'id_pasien'      =>$this->id_pasien_urut(),
         'nama'           =>$this->input->post('nama'),
+        'nik'            =>$this->input->post('nik'),
         'tgl_lahir'      =>$this->input->post('tgl_lahir'),
         'jenis_kelamin'  =>$this->input->post('jenis_kelamin'),
         'no_hp'          =>$this->input->post('no_hp'),
         'alamat'         =>$this->input->post('alamat'),
+        'kelurahan'      =>$this->input->post('kelurahan'),
         'kec'            =>$this->input->post('kec'),
         'kab'            =>$this->input->post('kab'),
         'email'          =>$this->input->post('email'),

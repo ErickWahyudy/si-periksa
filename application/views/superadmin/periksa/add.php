@@ -15,7 +15,7 @@
                                     <tr>
                                         <td width="20%">Nama Pasien</td>
                                         <td width="80%">
-                                            <select name="id_pasien" id="id_pasien" class="form-control select2" style="width: 100%;" required>
+                                            <select name="id_pasien" id="id_pasien" class="form-control" style="width: 100%;" required>
                                                 <option value="">--Pilih Nama Pasien--</option>
                                                 <?php foreach($data as $psn): ?>
                                                     <option value="<?= $psn['id_pasien'] ?>" data-tgl_lahir="<?= $psn['tgl_lahir'] ?>">
@@ -61,7 +61,18 @@
 </div>
 
 <script>
-    // Fungsi untuk menghitung umur berdasarkan tanggal lahir
+   $(document).ready(function() {
+        $('#id_pasien').change(function() {
+            var selectedPasien = $(this).find(':selected');
+            var birthdate = selectedPasien.data('tgl_lahir');
+
+            if (birthdate) {
+                var age = calculateAge(birthdate);
+                $('#umur').val(age);
+            }
+        });
+    });
+
     function calculateAge(birthdate) {
         var birthdate = new Date(birthdate);
         var today = new Date();
@@ -70,29 +81,7 @@
 
         age = age;
         return age;
-
     }
-
-    
-    $(document).ready(function() {
-        // Inisialisasi Select2 pada elemen dengan id 'id_pasien'
-        $('#id_pasien').select2({
-            placeholder: "--Pilih Nama Pasien--",
-            allowClear: true
-        });
-
-        // Event change pada dropdown nama pasien
-        $('#id_pasien').change(function () {
-            var selectedPasien = $(this).find(':selected');
-            var birthdate = selectedPasien.data('tgl_lahir');
-
-            // Jika tanggal lahir ada, hitung umur dan tampilkan
-            if (birthdate) {
-                var age = calculateAge(birthdate);
-                $('#umur').val(age);
-            }
-        });
-    });
 
     //add data
     $(document).ready(function() {

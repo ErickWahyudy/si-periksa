@@ -30,14 +30,20 @@
     <br>
 
     <label for="kelurahan">Kelurahan:</label>
-    <select id="kelurahan" disabled>
+    <select id="kelurahan"  onchange="populateAlamat()" disabled>
       <option value=''>Pilih Kelurahan</option>
     </select>
+
+    <br>
+
+    <label for="alamat">Alamat:</label>
+    <input type="text" id="alamat" disabled>
+    
   </form>
 
   <script>
-    //API WIlayah
-    fetch('https://kanglerian.github.io/api-wilayah-indonesia/api/provinces.json')
+//API Wilayah
+fetch('https://kanglerian.github.io/api-wilayah-indonesia/api/provinces.json')
           .then(response => response.json())
           .then(provinces => {
             var data = provinces;
@@ -57,8 +63,11 @@
           // Menonaktifkan dropdown kecamatan
           document.getElementById('kecamatan').disabled = true;
 
-          // Menonaktifkan input alamat
+          // Menonaktifkan input kelurahan
           document.getElementById('kelurahan').disabled = true;
+
+          // Menonaktifkan input alamat
+          document.getElementById('alamat').disabled = true;
 
           if (provinsi) {
             var region = document.querySelector(`#provinsi option[value="${provinsi}"]`).dataset.region;
@@ -84,8 +93,11 @@
                 // Menonaktifkan dropdown kecamatan
                 document.getElementById('kecamatan').disabled = true;
 
-                // Menonaktifkan input alamat
+                // Menonaktifkan input kelurahan
                 document.getElementById('kelurahan').disabled = true;
+
+                // Menonaktifkan input alamat
+                document.getElementById('alamat').disabled = true;
 
                 if (kabupaten) {
                   var region = document.querySelector(`#kabupaten option[value="${kabupaten}"]`).dataset.region;
@@ -108,8 +120,11 @@
               function populateKelurahan() {
                 var kecamatan = document.getElementById('kecamatan').value;
 
-                // Menonaktifkan input alamat
+                // Menonaktifkan input kelurahan
                 document.getElementById('kelurahan').disabled = true;
+
+                // Menonaktifkan input alamat
+                document.getElementById('alamat').disabled = true;
 
                 if (kecamatan) {
                   var region = document.querySelector(`#kecamatan option[value="${kecamatan}"]`).dataset.region;
@@ -128,6 +143,19 @@
                     })
                 }
               }
+              
+              function populateAlamat() {
+                var kelurahan = document.getElementById('kelurahan').value;
+
+                // Menonaktifkan input alamat
+                document.getElementById('alamat').disabled = true;
+
+                if (alamat) {
+                  // Mengaktifkan input alamat
+                  document.getElementById('alamat').disabled = false;
+                }
+
+                }
   </script>
 
 </body>

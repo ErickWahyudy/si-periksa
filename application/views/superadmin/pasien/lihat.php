@@ -21,6 +21,7 @@
                                     <tr>
                                         <th>No</th>
                                         <th>Nama</th>
+                                        <th>NIK</th>
                                         <th>Tgl Lahir</th>
                                         <th>Umur</th>
                                         <th>Jenis Kelamin</th>
@@ -33,13 +34,14 @@
                                 <tr>
                                     <td><?= $no ?></td>
                                     <td><?= $pasien['nama'] ?></td>
+                                    <td><?= $pasien['nik'] ?></td>
                                     <td><?= tgl_indo($pasien['tgl_lahir']) ?></td>
                                     <td>
                                         <?= umur(new DateTime($pasien['tgl_lahir'])) ?> Tahun
                                     </td>
                                     <td><?= $pasien['jenis_kelamin'] ?></td>
                                     <td><?= $pasien['no_hp'] ?></td>
-                                    <td><?= $pasien['alamat'] ?>, <?= $pasien['kec'] ?>, <?= $pasien['kab'] ?></td>
+                                    <td><?= $pasien['alamat'] ?>, <?= $pasien['kelurahan'] ?>, <?= $pasien['kec'] ?>, <?= $pasien['kab'] ?></td>
                                     <td>
                                         <a href="" class="btn btn-warning" data-toggle="modal"
                                             data-target="#edit<?= $pasien['id_pasien'] ?>"><i class="fa fa-edit"></i>
@@ -79,6 +81,13 @@
                         <tr>
                             <td><input type="text" name="nama" id="nama" class="form-control" autocomplete="off"
                                     required placeholder="Nama Pasien"></td>
+                        </tr>
+                        <tr>
+                            <td><label for="nik">NIK:</label></td>
+                        </tr>
+                        <tr>
+                            <td><input type="number" name="nik" id="nik" class="form-control" autocomplete="off"
+                                    required placeholder="NIK" maxlength="16" minlength="16"></td>
                         </tr>
                         <tr>
                             <td><label for="tgl_lahir">Tanggal Lahir:</label></td>
@@ -136,13 +145,23 @@
                                 </select>
                             </td>
                         </tr>
+                        <tr>
+                            <td><label for="kelurahan">Kelurahan:</label></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <select id="kelurahan" name="kelurahan" onchange="populateAlamat()" class="form-control select2" style="width: 100%;" required="" disabled>
+                                    <option value=''>Pilih Kelurahan/Desa</option>
+                                </select>
+                            </td>
+                        </tr>
                         </div>
                         <tr>
                             <td><label for="alamat">Alamat:</label></td>
                         </tr>
                         <tr>
                             <td>
-                                <input type="text" class="form-control" name="alamat" id="kelurahan" placeholder="Alamat" required="" autocomplete="off" disabled>
+                                <input type="text" class="form-control" name="alamat" id="alamat" placeholder="Alamat" required="" autocomplete="off" disabled>
                             </td>
                         </tr>
                         <tr>
@@ -195,6 +214,13 @@
                                     value="<?= $pasien['nama'] ?>" required></td>
                         </tr>
                         <tr>
+                            <td><label for="nik">NIK:</label></td>
+                        </tr>
+                        <tr>
+                            <td><input type="number" name="nik" id="nik" class="form-control" autocomplete="off"
+                                    value="<?= $pasien['nik'] ?>" required maxlength="16" minlength="16"></td>
+                        </tr>
+                        <tr>
                             <td><label for="tgl_lahir">Tanggal Lahir:</label></td>
                         </tr>
                         <tr>
@@ -229,6 +255,13 @@
                         <tr>
                             <td><input type="text" name="alamat" id="alamat" class="form-control" autocomplete="off"
                                     value="<?= $pasien['alamat'] ?>" required></td>
+                        </tr>
+                        <tr>
+                            <td><label for="kelurahan">Kelurahan:</label></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" name="kelurahan" id="kelurahan" class="form-control" autocomplete="off"
+                                    value="<?= $pasien['kelurahan'] ?>" required></td>
                         </tr>
                         <tr>
                             <td><label for="kec">Kecamatan:</label></td>
@@ -389,8 +422,11 @@ fetch('https://kanglerian.github.io/api-wilayah-indonesia/api/provinces.json')
           // Menonaktifkan dropdown kecamatan
           document.getElementById('kecamatan').disabled = true;
 
-          // Menonaktifkan input alamat
+          // Menonaktifkan input kelurahan
           document.getElementById('kelurahan').disabled = true;
+
+          // Menonaktifkan input alamat
+          document.getElementById('alamat').disabled = true;
 
           if (provinsi) {
             var region = document.querySelector(`#provinsi option[value="${provinsi}"]`).dataset.region;
@@ -416,8 +452,11 @@ fetch('https://kanglerian.github.io/api-wilayah-indonesia/api/provinces.json')
                 // Menonaktifkan dropdown kecamatan
                 document.getElementById('kecamatan').disabled = true;
 
-                // Menonaktifkan input alamat
+                // Menonaktifkan input kelurahan
                 document.getElementById('kelurahan').disabled = true;
+
+                // Menonaktifkan input alamat
+                document.getElementById('alamat').disabled = true;
 
                 if (kabupaten) {
                   var region = document.querySelector(`#kabupaten option[value="${kabupaten}"]`).dataset.region;
@@ -440,8 +479,11 @@ fetch('https://kanglerian.github.io/api-wilayah-indonesia/api/provinces.json')
               function populateKelurahan() {
                 var kecamatan = document.getElementById('kecamatan').value;
 
-                // Menonaktifkan input alamat
+                // Menonaktifkan input kelurahan
                 document.getElementById('kelurahan').disabled = true;
+
+                // Menonaktifkan input alamat
+                document.getElementById('alamat').disabled = true;
 
                 if (kecamatan) {
                   var region = document.querySelector(`#kecamatan option[value="${kecamatan}"]`).dataset.region;
@@ -460,6 +502,20 @@ fetch('https://kanglerian.github.io/api-wilayah-indonesia/api/provinces.json')
                     })
                 }
               }
+              
+              function populateAlamat() {
+                var kelurahan = document.getElementById('kelurahan').value;
+
+                // Menonaktifkan input alamat
+                document.getElementById('alamat').disabled = true;
+
+                if (alamat) {
+                  // Mengaktifkan input alamat
+                  document.getElementById('alamat').disabled = false;
+                }
+
+                }
+                
               
 //add data
 $(document).ready(function() {

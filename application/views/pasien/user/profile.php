@@ -26,6 +26,12 @@ if($aksi == "lihat"):
                                         </td>
                                     </tr>
                                     <tr>
+                                        <th>NIK</th>
+                                        <td>
+                                            <?= $nik ?>
+                                        </td>
+                                    </tr>
+                                    <tr>
                                         <th>Tanggal Lahir</th>
                                         <td>
                                             <?= tgl_indo($tgl_lahir) ?>
@@ -47,6 +53,12 @@ if($aksi == "lihat"):
                                         <th>Alamat</th>
                                         <td>
                                             <?= $alamat ?>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Kelurahan</th>
+                                        <td>
+                                            <?= $kelurahan ?>
                                         </td>
                                     </tr>
                                     <tr>
@@ -145,6 +157,17 @@ if($aksi == "lihat"):
                     </tr>
                     <tr>
                         <td>
+                            <label for="nik">NIK</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="text" name="nik" id="nik" class="form-control" value="<?= $nik ?>"
+                                autocomplete="off" required>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
                             <label for="tgl_lahir">Tanggal Lahir</label>
                         </td>
                     </tr>
@@ -215,15 +238,27 @@ if($aksi == "lihat"):
                             </select>
                         </td>
                     </tr>
-                    </div>
                     <tr>
                         <td>
-                            <label for="kel">Alamat</label>
+                            <label for="kelurahan">Kelurahan</label>
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <input type="text" name="alamat" id="kelurahan" class="form-control" value="<?= $alamat ?>"
+                            <select name="kelurahan" id="kelurahan" class="form-control select2" style="width: 100%;" onchange="populateAlamat()" required disabled>
+                                <option value=""><?= $kelurahan ?></option>
+                            </select>
+                        </td>
+                    </tr>
+                    </div>
+                    <tr>
+                        <td>
+                            <label for="alamat">Alamat</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="text" name="alamat" id="alamat" class="form-control" value="<?= $alamat ?>"
                                 autocomplete="off" required disabled>
                         </td>
                     </tr>
@@ -405,7 +440,7 @@ function previewLOGO() {
 
 };
 
-//API WIlayah
+//API Wilayah
 fetch('https://kanglerian.github.io/api-wilayah-indonesia/api/provinces.json')
           .then(response => response.json())
           .then(provinces => {
@@ -426,8 +461,11 @@ fetch('https://kanglerian.github.io/api-wilayah-indonesia/api/provinces.json')
           // Menonaktifkan dropdown kecamatan
           document.getElementById('kecamatan').disabled = true;
 
-          // Menonaktifkan input alamat
+          // Menonaktifkan input kelurahan
           document.getElementById('kelurahan').disabled = true;
+
+          // Menonaktifkan input alamat
+          document.getElementById('alamat').disabled = true;
 
           if (provinsi) {
             var region = document.querySelector(`#provinsi option[value="${provinsi}"]`).dataset.region;
@@ -453,8 +491,11 @@ fetch('https://kanglerian.github.io/api-wilayah-indonesia/api/provinces.json')
                 // Menonaktifkan dropdown kecamatan
                 document.getElementById('kecamatan').disabled = true;
 
-                // Menonaktifkan input alamat
+                // Menonaktifkan input kelurahan
                 document.getElementById('kelurahan').disabled = true;
+
+                // Menonaktifkan input alamat
+                document.getElementById('alamat').disabled = true;
 
                 if (kabupaten) {
                   var region = document.querySelector(`#kabupaten option[value="${kabupaten}"]`).dataset.region;
@@ -477,8 +518,11 @@ fetch('https://kanglerian.github.io/api-wilayah-indonesia/api/provinces.json')
               function populateKelurahan() {
                 var kecamatan = document.getElementById('kecamatan').value;
 
-                // Menonaktifkan input alamat
+                // Menonaktifkan input kelurahan
                 document.getElementById('kelurahan').disabled = true;
+
+                // Menonaktifkan input alamat
+                document.getElementById('alamat').disabled = true;
 
                 if (kecamatan) {
                   var region = document.querySelector(`#kecamatan option[value="${kecamatan}"]`).dataset.region;
@@ -497,6 +541,19 @@ fetch('https://kanglerian.github.io/api-wilayah-indonesia/api/provinces.json')
                     })
                 }
               }
+              
+              function populateAlamat() {
+                var kelurahan = document.getElementById('kelurahan').value;
+
+                // Menonaktifkan input alamat
+                document.getElementById('alamat').disabled = true;
+
+                if (alamat) {
+                  // Mengaktifkan input alamat
+                  document.getElementById('alamat').disabled = false;
+                }
+
+                }
 
 </script>
 

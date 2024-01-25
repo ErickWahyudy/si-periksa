@@ -72,17 +72,6 @@ $antrian_berikut = array_merge($data_umur_diatas_55, $data_umur_dibawah_55);
 
 <div id="target-div">
 
-<?php if($data == null): ?>
-    <div class="row">
-        <div class="col-md-12 col-sm-12 ">
-            <div class="x_panel text-center">
-                    <h1>Tidak Ada Antrian Periksa</h1>
-                    <div class="clearfix"></div>
-            </div>
-        </div>
-    </div>
-
-<?php else: ?>
 <?php if ($tgl_periksa == null || $tgl_periksa < date('Y-m-d')): ?>
     <div class="x_content">
         <div class="row">
@@ -217,7 +206,6 @@ $antrian_berikut = array_merge($data_umur_diatas_55, $data_umur_dibawah_55);
         </div>
     </div>
 
-<?php endif; ?>
 <?php endif; ?>
 
 </div>

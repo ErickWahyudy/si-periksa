@@ -31,10 +31,12 @@ class Profile extends CI_controller
     'judul'           =>'Data Akun Profile',
     'id_pasien'       =>$data['id_pasien'],
     'nama'            =>$data['nama'],
+    'nik'             =>$data['nik'],
     'tgl_lahir'       =>$data['tgl_lahir'],
     'jenis_kelamin'   =>$data['jenis_kelamin'],
     'no_hp'           =>$data['no_hp'],
     'alamat'          =>$data['alamat'],
+    'kelurahan'       =>$data['kelurahan'],
     'kec'             =>$data['kec'],
     'kab'             =>$data['kab'],
     'email'           =>$data['email'],
@@ -57,6 +59,15 @@ class Profile extends CI_controller
           ),
         ),
       array(
+          'field' => 'nik',
+          'label' => 'NIK',
+          'rules' => 'required',
+          'errors' => array(
+              'required' => 'NIK tidak boleh kosong',
+              'is_unique' => 'NIK sudah terdaftar',
+            ),
+          ),
+      array(
           'field' => 'tgl_lahir',
           'label' => 'Tanggal Lahir',
           'rules' => 'required',
@@ -78,7 +89,6 @@ class Profile extends CI_controller
           'rules' => 'required',
           'errors' => array(
               'required' => 'No HP tidak boleh kosong',
-              'is_unique' => 'No HP sudah terdaftar',
             ),
           ),
       array(
@@ -87,6 +97,14 @@ class Profile extends CI_controller
           'rules' => 'required',
           'errors' => array(
               'required' => 'Alamat tidak boleh kosong',
+            ),
+          ),
+      array(
+          'field' => 'kelurahan',
+          'label' => 'Kelurahan',
+          'rules' => 'required',
+          'errors' => array(
+              'required' => 'Kelurahan tidak boleh kosong',
             ),
           ),
       array(
@@ -108,10 +126,10 @@ class Profile extends CI_controller
       array(
           'field' => 'email',
           'label' => 'Email',
-          'rules' => 'required|valid_email',
+          'rules' => 'required',
           'errors' => array(
               'required' => 'Email tidak boleh kosong',
-              'valid_email' => 'Email tidak valid',
+              'is_unique' => 'Email sudah terdaftar',
             ),
           ),
     );
@@ -124,10 +142,12 @@ class Profile extends CI_controller
     } else {
       $SQLupdate = [
         'nama'            => $this->input->post('nama'),
+        'nik'             => $this->input->post('nik'),
         'tgl_lahir'       => $this->input->post('tgl_lahir'),
         'jenis_kelamin'   => $this->input->post('jenis_kelamin'),
         'no_hp'           => $this->input->post('no_hp'),
         'alamat'          => $this->input->post('alamat'),
+        'kelurahan'       => $this->input->post('kelurahan'),
         'kec'             => $this->input->post('kec'),
         'kab'             => $this->input->post('kab'),
         'email'           => $this->input->post('email'),
