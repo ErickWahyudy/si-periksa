@@ -20,7 +20,6 @@
 
     <?php elseif($depan == FALSE): ?>
 
-
 <?php
 // Fungsi untuk membandingkan umur dari dua data
 function compareUmur($a, $b) {
@@ -36,30 +35,30 @@ function compareUmur($a, $b) {
 }
 
 // Memisahkan data menjadi dua kelompok berdasarkan umur
-$data_umur_diatas_55 = array_filter($data, function ($periksa) {
+$data_umur_diatas_60 = array_filter($data, function ($periksa) {
     $umur = $periksa['umur'];
-    return $umur >= 55;
+    return $umur >= 60;
 });
 
-$data_umur_dibawah_55 = array_filter($data, function ($periksa) {
+$data_umur_dibawah_60 = array_filter($data, function ($periksa) {
     $umur = $periksa['umur'];
-    return $umur < 55;
+    return $umur < 60;
 });
 
-// Mengurutkan kelompok umur di atas 55 tahun berdasarkan umur terbesar
-usort($data_umur_diatas_55, function ($a, $b) {
+// Mengurutkan kelompok umur di atas 60 tahun berdasarkan umur terbesar
+usort($data_umur_diatas_60, function ($a, $b) {
     $umur_a = umur(new DateTime($a['tgl_lahir']));
     $umur_b = umur(new DateTime($b['tgl_lahir']));
     return $umur_b - $umur_a;
 });
 
-// // Mengurutkan kelompok umur di bawah 55 tahun berdasarkan id_periksa
-// usort($data_umur_dibawah_55, function ($a, $b) {
+// // Mengurutkan kelompok umur di bawah 60 tahun berdasarkan id_periksa
+// usort($data_umur_dibawah_60, function ($a, $b) {
 //     return $a['id_periksa'] - $b['id_periksa'];
 // });
 
 // Menggabungkan kedua kelompok data
-$data = array_merge($data_umur_diatas_55, $data_umur_dibawah_55);
+$data = array_merge($data_umur_diatas_60, $data_umur_dibawah_60);
 
 ?>
 
