@@ -83,18 +83,22 @@
             <form id="add" method="post">
               <h1>Create New Account Pasien</h1>
               <div>
-                <input type="text" class="form-control" name="nama" placeholder="Nama Lengkap" required="" autocomplete="off" />
+                <span class="col-md-12" style="text-align: left;">Nama Lengkap :</span>
+                <input type="text" class="form-control" name="nama" placeholder="Masukkan nama lengkap anda" required="" autocomplete="off" />
               </div>
 
               <div>
-                <input type="text" class="form-control" name="nik" placeholder="NIK" required="" autocomplete="off" maxlength="16" minlength="16">
+                <span class="col-md-12" style="text-align: left;">Nomor Induk Kependudukan (NIK) :</span>
+                <input type="text" class="form-control" name="nik" placeholder="Masukkan NIK dengan benar" required="" autocomplete="off" maxlength="16" minlength="16">
               </div>
 
               <div>
+                <span class="col-md-12" style="text-align: left;">Tanggal Lahir :</span>
                 <input type="date" class="form-control" name="tgl_lahir" placeholder="Tanggal Lahir" required="" autocomplete="off" value="<?= date('Y-m-d') ?>" />
               </div>
                   <br>
               <div>
+                <span class="col-md-12" style="text-align: left;">Jenis Kelamin :</span>
                 <select name="jenis_kelamin" class="form-control" required="">
                   <option value="">-- Pilih Jenis Kelamin --</option>
                   <option value="Laki-laki">Laki-laki</option>
@@ -103,46 +107,52 @@
               </div>
                   <br>
               <div>
-                <input type="number" class="form-control" name="no_hp" placeholder="No HP" required="" autocomplete="off" />
+                <span class="col-md-12" style="text-align: left;">Nomor HP :</span>
+                <input type="number" class="form-control" name="no_hp" placeholder="Masukkan No HP dengan benar" required="" autocomplete="off" />
               </div>
                   <br>
                   
               <div>
+                <span class="col-md-12" style="text-align: left;">Provinsi :</span>
                 <select id="provinsi" onchange="populateKabupaten()" class="form-control select2" required="">
                   <!-- Pilihan Provinsi akan diisi secara dinamis dari API -->
                 </select>
               </div>
                   <br>
               <div>
+                 <span class="col-md-12" style="text-align: left;">Kabupaten/Kota :</span>
                   <select id="kabupaten" name="kab" onchange="populateKecamatan()" class="form-control select2" required="" disabled>
                     <option value=''>Pilih Kabupaten/Kota</option>
                   </select>
               </div>
                   <br>
               <div>
+                  <span class="col-md-12" style="text-align: left;">Kecamatan :</span>
                   <select id="kecamatan" name="kec" onchange="populateKelurahan()" class="form-control select2" required="" disabled>
                     <option value=''>Pilih Kecamatan</option>
                   </select>
               </div>
                   <br>
               <div>
+                  <span class="col-md-12" style="text-align: left;">Kelurahan/Desa :</span>
                   <select id="kelurahan" name="kelurahan" class="form-control select2" required="" onchange="populateAlamat()" disabled>
                     <option value=''>Pilih Kelurahan/Desa</option>
                   </select>
               </div>
                   <br>
               <div>
+                  <span class="col-md-12" style="text-align: left;">Alamat :</span>
                   <input type="text" class="form-control" name="alamat" id="alamat" placeholder="Alamat" required="" autocomplete="off" disabled>
               </div>
               <div>
-                <input type="email" class="form-control" name="email" placeholder="Email" required="" autocomplete="off" />
+                <span class="col-md-12" style="text-align: left;">Email :</span>
+                <input type="email" class="form-control" name="Masukkan email aktif anda" placeholder="Email" required="" autocomplete="off" />
               </div>
               <div>
+                <span class="col-md-12" style="text-align: left;">Password :</span>
                 <input type="password" class="form-control" name="password" placeholder="Password" required="" autocomplete="off" />
               </div>
-              <br><br>
-                
-              
+              <br>
               <div>
                 <button type="submit" class="btn btn-primary submit">Submit</button>
               </div>

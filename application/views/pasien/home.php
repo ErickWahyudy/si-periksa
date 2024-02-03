@@ -58,6 +58,16 @@ $data = array_merge($data_umur_diatas_60, $data_umur_dibawah_60);
                             anda belum membuat antrian baru, silahkan klik tombol Daftar Periksa untuk membuat antrian
                             baru
                         </div>
+                        <!-- tata cara daftar periksa -->
+                        <div class="alert alert-info">
+                            <h4><i class="icon fa fa-info"></i> Tata Cara Daftar Periksa Baru </h4>
+                            <ol>
+                                <li>Klik tombol Daftar Periksa Sekarang</li>
+                                <li>Isi form pendaftaran periksa sesuai perintah</li>
+                                <li>Klik tombol Simpan</li>
+                            </ol>
+                        </div>
+                        </div>
                     </div>
                 </div>
             </div>
