@@ -146,7 +146,7 @@
               </div>
               <div>
                 <span class="col-md-12" style="text-align: left;">Email :</span>
-                <input type="email" class="form-control" name="Masukkan email aktif anda" placeholder="Email" required="" autocomplete="off" />
+                <input type="email" class="form-control" name="email" placeholder="Masukkan email aktif anda" required="" autocomplete="off" />
               </div>
               <div>
                 <span class="col-md-12" style="text-align: left;">Password :</span>
