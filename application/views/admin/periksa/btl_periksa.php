@@ -63,7 +63,7 @@
                                         <th>Umur</th>
                                         <th>Jenis Kelamin</th>
                                         <th>Keluhan</th>
-                                        <th>Aksi</th>
+                                        
                                     </tr>
                                 </thead>
                                 <?php $no=1; foreach($data as $periksa): ?>
@@ -73,11 +73,7 @@
                                     <td><?= $periksa['umur'] ?></td>
                                     <td><?= $periksa['jenis_kelamin'] ?></td>
                                     <td><?= $periksa['keluhan'] ?></td>
-                                    <td>
-                                        <a href="" class="btn btn-warning" data-toggle="modal"
-                                            data-target="#edit<?= $periksa['id_periksa'] ?>"><i class="fa fa-edit"></i>
-                                            Edit</a>
-                                    </td>
+                                   
                                 </tr>
                                 <?php $no++; endforeach; ?>
                                 </tbody>

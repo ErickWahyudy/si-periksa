@@ -63,7 +63,7 @@
                                         <th>Jenis Kelamin</th>
                                         <th>Keluhan</th>
                                         <th>Status</th>
-                                        <th>Aksi</th>
+                                        
                                     </tr>
                                 </thead>
                                 <?php $no=1; foreach($data as $periksa): ?>
@@ -86,12 +86,7 @@
                                                 <?php }elseif($stt == 'D'){ ?>
                                         <?php } ?>
                                     </td>
-                                    <td>
-
-                                        <a href="" class="btn btn-warning" data-toggle="modal"
-                                            data-target="#editperiksa<?= $periksa['id_periksa'] ?>"><i class="fa fa-edit"></i>
-                                            Edit</a>
-                                    </td>
+                                   
                                 </tr>
                                 <?php $no++; endforeach; ?>
                                 </tbody>
