@@ -19,47 +19,28 @@
     </table>
 
     <?php elseif($depan == FALSE): ?>
-<?php
-// Fungsi untuk membandingkan umur dari dua data
-function compareUmur($a, $b) {
-    $tgl_lahir_a = new DateTime($a['tgl_lahir']);
-    $tgl_lahir_b = new DateTime($b['tgl_lahir']);
-    
-    // Menggunakan diff() untuk mendapatkan selisih umur
-    $umur_a = $tgl_lahir_a->diff(new DateTime())->y;
-    $umur_b = $tgl_lahir_b->diff(new DateTime())->y;
+        <?php
+        // Mencari antrian yang belum diproses dan berusia di atas 60 tahun
+        $antrian_umur_diatas_60_belum_diproses = [];
+        foreach ($data as $periksa) {
+            if ($periksa['umur'] >= 60 && $periksa['status'] == 'BL') {
+                $antrian_umur_diatas_60_belum_diproses[] = $periksa;
+            }
+        }
 
-    // Mengembalikan perbandingan umur
-    return $umur_a - $umur_b;
-}
-
-// Memisahkan data menjadi dua kelompok berdasarkan umur
-$data_umur_diatas_60 = array_filter($data, function ($periksa) {
-    $umur = $periksa['umur'];
-    return $umur >= 60;
-});
-
-$data_umur_dibawah_60 = array_filter($data, function ($periksa) {
-    $umur = $periksa['umur'];
-    return $umur < 60;
-});
-
-// Mengurutkan kelompok umur di atas 60 tahun berdasarkan umur terbesar
-usort($data_umur_diatas_60, function ($a, $b) {
-    $umur_a = umur(new DateTime($a['tgl_lahir']));
-    $umur_b = umur(new DateTime($b['tgl_lahir']));
-    return $umur_b - $umur_a;
-});
-
-// // Mengurutkan kelompok umur di bawah 60 tahun berdasarkan id_periksa
-// usort($data_umur_dibawah_60, function ($a, $b) {
-//     return $a['id_periksa'] - $b['id_periksa'];
-// });
-
-// Menggabungkan kedua kelompok data
-$data = array_merge($data_umur_diatas_60, $data_umur_dibawah_60);
-
-?>
+        // Jika ada antrian di atas 60 tahun yang belum diproses, pindahkan satu ke atas
+        foreach ($antrian_umur_diatas_60_belum_diproses as $antrian_yang_dipindahkan) {
+            // Ambil satu antrian di atas 60 tahun yang belum diproses
+            $index_antrian = array_search($antrian_yang_dipindahkan, $data);
+            // Pindahkan antrian ke atas satu level jika bukan antrian teratas
+            if ($index_antrian > 0) {
+                // Hapus antrian dari posisi sebelumnya
+                unset($data[$index_antrian]);
+                // Masukkan kembali antrian di posisi satu level di atasnya
+                array_splice($data, $index_antrian - 2, 0, [$antrian_yang_dipindahkan]);
+            }
+        }
+        ?>
 
 <div class="row">
     <div class="col-md-12 col-sm-12 ">
