@@ -24,7 +24,7 @@
         // Mencari antrian yang belum diproses dan berusia di atas 60 tahun
         $antrian_umur_diatas_60_belum_diproses = [];
         foreach ($data as $periksa) {
-            if ($periksa['umur'] >= 60 && $periksa['status'] == 'BL') {
+            if ($periksa['umur'] >= 60 && $periksa['status'] == 'BL' && $periksa['status'] != 'BTL' && $periksa['status'] != 'S' && $periksa['status'] != 'D') {
                 $antrian_umur_diatas_60_belum_diproses[] = $periksa;
             }
         }
