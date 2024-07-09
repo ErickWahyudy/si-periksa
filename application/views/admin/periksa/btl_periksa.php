@@ -24,23 +24,26 @@
         // Mencari antrian yang belum diproses dan berusia di atas 60 tahun
         $antrian_umur_diatas_60_belum_diproses = [];
         foreach ($data as $periksa) {
-            if ($periksa['umur'] >= 60 && $periksa['status'] == 'BL' && $periksa['status'] != 'BTL' && $periksa['status'] != 'S' && $periksa['status'] != 'D') {
+            if ($periksa['umur'] >= 60 && ($periksa['status'] == 'BL' || $periksa['status'] == 'D' || $periksa['status'] == 'S' || $periksa['status'] == 'BTL')) {
                 $antrian_umur_diatas_60_belum_diproses[] = $periksa;
             }
         }
 
-        // Jika ada antrian di atas 60 tahun yang belum diproses, pindahkan satu ke atas
-        foreach ($antrian_umur_diatas_60_belum_diproses as $antrian_yang_dipindahkan) {
-            // Ambil satu antrian di atas 60 tahun yang belum diproses
-            $index_antrian = array_search($antrian_yang_dipindahkan, $data);
-            // Pindahkan antrian ke atas satu level jika bukan antrian teratas
-            if ($index_antrian > 0) {
-                // Hapus antrian dari posisi sebelumnya
-                unset($data[$index_antrian]);
-                // Masukkan kembali antrian di posisi satu level di atasnya
-                array_splice($data, $index_antrian - 2, 0, [$antrian_yang_dipindahkan]);
+        // Membatasi maksimal 3 antrian usia di atas 60 tahun
+        $antrian_umur_diatas_60_belum_diproses = array_slice($antrian_umur_diatas_60_belum_diproses, 0, 3);
+
+        // Membuat array baru dengan antrian prioritas di atas
+        $data_prioritas = $antrian_umur_diatas_60_belum_diproses;
+
+        // Menambahkan antrian lainnya setelah antrian prioritas
+        foreach ($data as $periksa) {
+            if (!in_array($periksa, $antrian_umur_diatas_60_belum_diproses)) {
+                $data_prioritas[] = $periksa;
             }
         }
+
+        // Mengganti data asli dengan data yang sudah diprioritaskan
+        $data = $data_prioritas;
         ?>
 
 
